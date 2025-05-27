@@ -1,0 +1,6 @@
+{
+    "PORT" : 3000, // the port the server will run on
+    "SESSIONTOKENLENGTH": 32, // how long a session token is
+    "SESSIONTOKENLIFETIME": 1209600, // how long a session token is valid for 1209600 = 2 weeks
+    "SALTLENGTH" : 16
+}
