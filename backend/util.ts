@@ -79,3 +79,21 @@ export function removeJSONcomments(text : string) : string{
     return ret.join("")
     
 }
+
+export function requireEnv(name: string): string {
+  const value = Deno.env.get(name);
+  if (!value) throw new Error(`Missing required environment variable: ${name} \n You should init the project by running "deno task init"`);
+  return value;
+}
+
+
+// CLASSES
+
+export interface fingerPrint{
+    ip : string
+}
+
+export interface sessionToken{
+    expires : number,
+    token : string
+}

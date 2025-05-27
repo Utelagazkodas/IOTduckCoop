@@ -1,6 +1,7 @@
 {
-    "PORT" : 3000, // the port the server will run on
+    "PORT" : 3000, // the port the server will run on you can change this from 3000 but i wouldnt
     "SESSIONTOKENLENGTH": 32, // how long a session token is
     "SESSIONTOKENLIFETIME": 1209600, // how long a session token is valid for 1209600 = 2 weeks
-    "SALTLENGTH" : 16
+    "SALTLENGTH" : 16, // how long the salt will be higher = more secure but slower
+    "ONETIMETOKENLIFETIME" : 3600  // when someone doesnt want to stay logged in, they will be logged in for this amount of time
 }

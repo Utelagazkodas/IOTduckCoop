@@ -1,5 +1,5 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
     "jsr:@alikia/random-key@^1.0.1": "1.0.1",
     "jsr:@denosaurs/plug@^1.0.6": "1.1.0",
@@ -114,6 +114,7 @@
       "jsr:@alikia/random-key@^1.0.1",
       "jsr:@felix/bcrypt@^1.0.5",
       "jsr:@std/assert@1",
+      "jsr:@std/encoding@^1.0.10",
       "jsr:@std/http@1"
     ]
   }
