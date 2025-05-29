@@ -23,4 +23,4 @@ const password = getInAString("What should be the password for the cam: ", 8)
 
 const passwordHash = encodeHex( await crypto.subtle.digest("SHA-512", new TextEncoder().encode(salt + password + salt)))
 
-env.write(new TextEncoder().encode(`SALT="${salt}" \nPORT=${settings.PORT} \nSESSIONTOKENLENGTH=${settings.SESSIONTOKENLENGTH} \nSESSSIONTOKENLIFETIME=${settings.SESSIONTOKENLIFETIME} \nPASSWORDHASH=${passwordHash} \nONETIMETOKENLIFETIME=${settings.ONETIMETOKENLIFETIME}`))
+env.write(new TextEncoder().encode(`SALT="${salt}" \nPORT=${settings.PORT} \nSESSIONTOKENLENGTH=${settings.SESSIONTOKENLENGTH} \nSESSSIONTOKENLIFETIME=${settings.SESSIONTOKENLIFETIME} \nPASSWORDHASH="${passwordHash}" \nONETIMETOKENLIFETIME=${settings.ONETIMETOKENLIFETIME}`))

@@ -86,6 +86,9 @@ export function requireEnv(name: string): string {
   return value;
 }
 
+export function fingerPrintMatching(a: fingerPrint, b : fingerPrint) : boolean{
+    return a.ip == b.ip
+}
 
 // CLASSES
 
