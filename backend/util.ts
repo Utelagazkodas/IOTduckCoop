@@ -1,3 +1,6 @@
+import { cameraPosition, cameraRange, cameraTurnRange, lightOn } from "./interface.ts";
+import { SALT, SESSIONTOKENLENGTH, SESSIONTOKENLIFETIME, ONETIMETOKENLIFETIME } from "./main.ts";
+
 export function getUnixTime(): number {
     return Math.round(Date.now() / 1000)
 }
@@ -90,6 +93,9 @@ export function fingerPrintMatching(a: fingerPrint, b : fingerPrint) : boolean{
     return a.ip == b.ip
 }
 
+export function getStatusData() : statusData{
+    return {cameraPosition: cameraPosition, lightOn: lightOn, salt: SALT, cameraRange: cameraRange, cameraTurnRange: cameraTurnRange, sessionTokenLength: SESSIONTOKENLENGTH, sessionTokenLifetime : SESSIONTOKENLIFETIME, oneTimeTokenLifetime: ONETIMETOKENLIFETIME}
+}
 // CLASSES
 
 export interface fingerPrint{
@@ -99,4 +105,15 @@ export interface fingerPrint{
 export interface sessionToken{
     expires : number,
     token : string
+}
+
+export interface statusData{
+    salt : string,
+    lightOn : boolean,
+    cameraPosition : number,
+    cameraRange : number,
+    cameraTurnRange : number,
+    sessionTokenLength : number,
+    sessionTokenLifetime : number,
+    oneTimeTokenLifetime : number
 }
