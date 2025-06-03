@@ -49,7 +49,6 @@ export async function post(
 
   if (req.bodyUsed) {
     let data: sessionToken
-    // deno-lint-ignore prefer-const
 
     try {
       data = JSON.parse(await req.text());
