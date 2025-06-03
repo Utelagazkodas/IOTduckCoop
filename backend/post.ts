@@ -1,13 +1,14 @@
 import { generate } from "@alikia/random-key";
 import { ONETIMETOKENLIFETIME, PASSWORDHASH, SESSIONTOKENLENGTH, SessionTokens, SESSIONTOKENLIFETIME } from "./main.ts";
-import { fingerPrint, fingerPrintMatching, getStatusData, getUnixTime, sessionToken } from "./util.ts";
+import { getStatusData, getUnixTime, sessionToken } from "./util.ts";
 import { toggleLight, turnCameraLeft, turnCameraRight } from "./interface.ts";
 
 
 // URL PATTERNS
 const loginPattern = new URLPattern({ pathname: "/login" });
 const oneTimeLoginPattern = new URLPattern({ pathname: "/login/one-time" });
-const logoutPattern = new URLPattern({ pathname: "/logout" });
+const logoutPattern = new URLPattern({pathname: "/logout"})
+const logoutEverywherePattern = new URLPattern({ pathname: "/logoutEverywhere" });
 
 const lightTogglePattern = new URLPattern({pathname: "/toggleLight"})
 
@@ -38,12 +39,8 @@ export async function post(
           : getUnixTime() + SESSIONTOKENLIFETIME,
       };
 
-      const newFingerPrint: fingerPrint = { ip: inf.remoteAddr.hostname };
 
-      SessionTokens.set(newSessionToken.token, {
-        sessionToken: newSessionToken,
-        fingerPrint: newFingerPrint,
-      });
+      SessionTokens.set(newSessionToken.token, newSessionToken)
       return new Response(JSON.stringify(newSessionToken));
     } else {
       return new Response("Password incorrect", { status: 401 });
@@ -51,9 +48,8 @@ export async function post(
   }
 
   if (req.bodyUsed) {
-    let data: { sessionToken: sessionToken };
+    let data: sessionToken
     // deno-lint-ignore prefer-const
-    let fingerPrint: fingerPrint = { ip: inf.remoteAddr.hostname };
 
     try {
       data = JSON.parse(await req.text());
@@ -63,19 +59,23 @@ export async function post(
 
     // authenticates request
     if (
-      !(SessionTokens.has(data.sessionToken.token) &&
-        fingerPrintMatching(
-          SessionTokens.get(data.sessionToken.token)?.fingerPrint!,
-          fingerPrint,
-        ))
+      !(SessionTokens.has(data.token))
     ) {
       return new Response(
-        "Session token doesnt exist, or fingerprints dont match",
+        "Session token doesnt exist, or fingerprints dont match", {status: 401}
       );
+    }
+    else if(SessionTokens.get(data.token)!.expires < getUnixTime()){
+      return new Response("Session token expired, and was deleted", {status: 401})
     }
 
     // if they want to logout
-    if (logoutPattern.test(url)) {
+    if(logoutPattern.test(url)){
+      SessionTokens.delete(data.token)
+      return new Response("Session token deleted", {status: 205})
+    }
+
+    if (logoutEverywherePattern.test(url)) {
       SessionTokens.clear();
       return new Response("Session tokens cleared", {status: 205})
     }

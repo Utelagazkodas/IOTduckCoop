@@ -1,6 +1,5 @@
 import "jsr:@std/dotenv/load";
 import {
-  fingerPrint,
   requireEnv,
   sessionToken,
 } from "./util.ts";
@@ -18,7 +17,7 @@ export const ONETIMETOKENLIFETIME = Number(requireEnv("ONETIMETOKENLIFETIME"));
 // INIT SESSION TOKEN MAP
 export const SessionTokens: Map<
   string,
-  { sessionToken: sessionToken; fingerPrint: fingerPrint }
+ sessionToken
 > = new Map();
 
 

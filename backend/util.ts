@@ -89,18 +89,13 @@ export function requireEnv(name: string): string {
   return value;
 }
 
-export function fingerPrintMatching(a: fingerPrint, b : fingerPrint) : boolean{
-    return a.ip == b.ip
-}
+
 
 export function getStatusData() : statusData{
     return {cameraPosition: cameraPosition, lightOn: lightOn, salt: SALT, cameraRange: cameraRange, cameraTurnRange: cameraTurnRange, sessionTokenLength: SESSIONTOKENLENGTH, sessionTokenLifetime : SESSIONTOKENLIFETIME, oneTimeTokenLifetime: ONETIMETOKENLIFETIME}
 }
 // CLASSES
 
-export interface fingerPrint{
-    ip : string
-}
 
 export interface sessionToken{
     expires : number,
@@ -116,4 +111,8 @@ export interface statusData{
     sessionTokenLength : number,
     sessionTokenLifetime : number,
     oneTimeTokenLifetime : number
+}
+
+export interface loginData{
+    passwordHash : string
 }
