@@ -55,29 +55,26 @@ export async function logIn(password: string, oneTime: boolean = true) {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 
-    console.log(passwordHash)
 
-  
 
-  const data = { passwordHash };
-  console.log(passwordHash);
+  const data : {passwordHash : string} = { passwordHash };
+
 
   if (oneTime) {
     const resp = await fetch($IP + "login/one-time", {
       method: "POST",
-      body: JSON.stringify(data)
-        });
+      body: JSON.stringify(data),
+    });
 
-    const result : sessionToken = await resp.json();
+    const result: sessionToken = await resp.json();
     currentSessionToken.set(result); // Example update
-  }
-  else {
-        const resp = await fetch($IP + "login/one-time", {
+  } else {
+    const resp = await fetch($IP + "login/one-time", {
       method: "POST",
-      body: JSON.stringify(data)
-        });
+      body: JSON.stringify(data),
+    });
 
-    const result : sessionToken = await resp.json();
+    const result: sessionToken = await resp.json();
     currentSessionToken.set(result); // Example update
   }
 }
