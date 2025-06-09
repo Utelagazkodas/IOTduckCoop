@@ -1,6 +1,7 @@
 import { get, writable } from "svelte/store";
 import type { sessionToken, statusData } from "./classes";
 
+
 // Svelte reactive stores
 export const IP = writable<string | undefined>(undefined);
 export const status = writable<statusData | undefined>(undefined);

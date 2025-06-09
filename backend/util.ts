@@ -1,4 +1,4 @@
-import { cameraPosition, cameraRange, cameraTurnRange, lightOn } from "./interface.ts";
+import { cameraPosition, cameraRange, cameraTurnRange, doorOpen, lightOn } from "./interface.ts";
 import { SALT, SESSIONTOKENLENGTH, SESSIONTOKENLIFETIME, ONETIMETOKENLIFETIME } from "./main.ts";
 
 export function getUnixTime(): number {
@@ -92,7 +92,7 @@ export function requireEnv(name: string): string {
 
 
 export function getStatusData() : statusData{
-    return {cameraPosition: cameraPosition, lightOn: lightOn, salt: SALT, cameraRange: cameraRange, cameraTurnRange: cameraTurnRange, sessionTokenLength: SESSIONTOKENLENGTH, sessionTokenLifetime : SESSIONTOKENLIFETIME, oneTimeTokenLifetime: ONETIMETOKENLIFETIME}
+    return {cameraPosition: cameraPosition, lightOn: lightOn, salt: SALT, cameraRange: cameraRange, cameraTurnRange: cameraTurnRange, sessionTokenLength: SESSIONTOKENLENGTH, sessionTokenLifetime : SESSIONTOKENLIFETIME, oneTimeTokenLifetime: ONETIMETOKENLIFETIME, doorOpen: doorOpen}
 }
 // CLASSES
 
@@ -110,7 +110,8 @@ export interface statusData{
     cameraTurnRange : number,
     sessionTokenLength : number,
     sessionTokenLifetime : number,
-    oneTimeTokenLifetime : number
+    oneTimeTokenLifetime : number,
+    doorOpen : boolean
 }
 
 export interface loginData{

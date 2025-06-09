@@ -2,6 +2,7 @@ import { generate } from "@alikia/random-key";
 import { ONETIMETOKENLIFETIME, PASSWORDHASH, SESSIONTOKENLENGTH, SessionTokens, SESSIONTOKENLIFETIME } from "./main.ts";
 import { getStatusData, getUnixTime, sessionToken } from "./util.ts";
 import { toggleLight, turnCameraLeft, turnCameraRight } from "./interface.ts";
+import { sleep } from "https://deno.land/x/sleep/mod.ts"
 
 
 // URL PATTERNS
@@ -14,6 +15,9 @@ const lightTogglePattern = new URLPattern({pathname: "/toggleLight"})
 
 const turnCameraLeftPattern = new URLPattern({pathname: "/turnCameraLeft"})
 const turnCameraRightPattern = new URLPattern({pathname: "/turnCameraRight"})
+
+const connectToCamPattern = new URLPattern({pathname: "/connectCam"})
+
 
 export async function post(
   req: Request,
@@ -94,6 +98,17 @@ export async function post(
     if(turnCameraRightPattern.test(url)){
       turnCameraRight()
       return new Response(JSON.stringify(getStatusData()), {status: 200})
+    }
+
+    if(connectToCamPattern.test(url)){
+      let {writable, readable} = new TransformStream()
+
+      async()=>{
+        sleep(1)
+        writable.getWriter().write("asd")
+      }
+
+      return new Response(readable, {status: 200})
     }
   }
   return new Response("404, bad post request", { status: 404 });
