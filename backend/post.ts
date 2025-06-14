@@ -51,7 +51,7 @@ export async function post(
     }
   }
 
-  if (req.bodyUsed) {
+  if (req.bodyUsed) { 
     let data: sessionToken
 
     try {
