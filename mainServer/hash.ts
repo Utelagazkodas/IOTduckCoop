@@ -1,6 +1,6 @@
 function sqrtToBinaryNumbers(n: number): number[] {
     const sqrt = Math.sqrt(n);
-    let binary: number[] = [];
+    const binary: number[] = [];
     let frac = sqrt % 1;
 
     while (binary.length < CHUNKLENGTH) {
@@ -22,9 +22,9 @@ function byteToString(n: number): number[] {
         num = Math.floor(num / 2);
     }
 
-    let t = result.join("").padStart(8, "0").split("");
+    const t = result.join("").padStart(8, "0").split("");
     result = [];
-    t.forEach((value, i) => {
+    t.forEach((value, _i) => {
         result.push(Number(value));
     });
     return result;
@@ -36,12 +36,12 @@ function shiftRight(
     shiftAmount: number,
     loop: boolean = true,
 ): number[] {
-    let result = numbers;
-    let shift = shiftAmount % numbers.length;
+    const result = numbers;
+    const shift = shiftAmount % numbers.length;
 
     for (let i = 0; i < shift; i++) {
         if (loop) {
-            let t = result.pop();
+            const t = result.pop();
             result.unshift(t!);
         } else {
             result.pop();
@@ -58,12 +58,12 @@ function shiftLeft(
     shiftAmount: number,
     loop: boolean = true,
 ): number[] {
-    let result = numbers;
-    let shift = shiftAmount % numbers.length;
+    const result = numbers;
+    const shift = shiftAmount % numbers.length;
 
     for (let i = 0; i < shift; i++) {
         if (loop) {
-            let t = result.shift();
+            const t = result.shift();
             result.push(t!);
         } else {
             result.shift();
@@ -111,7 +111,7 @@ function merge(nums1: number[], nums2: number[]): number[] {
     let tnums1 = nums1;
     let tnums2 = nums2;
 
-    let prime = primeSquareRoots[
+    const prime = primeSquareRoots[
         (binaryToNumber([
             nums1[0],
             nums2[0],
@@ -139,7 +139,7 @@ function merge(nums1: number[], nums2: number[]): number[] {
         throw "this can only be 0 or 1";
     }
 
-    let res: number[] = [];
+    const res: number[] = [];
 
     for (let i = 0; i < CHUNKLENGTH; i++) {
         res.push(xor([tnums1[i], tnums2[i], prime[i]]));
@@ -363,14 +363,14 @@ function generatePrimes() {
 // it takes the last 2 charachters that were added, multiplies them by 15/17 then floors it and makes it always be 8 bits
 // if t[t.length-2] doesnt exist just replace it with 13
 function toLetterCodes(input: string): number[][] {
-    let serialized: number[][] = [];
+    const serialized: number[][] = [];
     let i = 0;
-    let chunkAmount = Math.ceil(input.length / INPUTCHUNKLENGTH);
+    const chunkAmount = Math.ceil(input.length / INPUTCHUNKLENGTH);
 
     while (i < chunkAmount) {
-        let t: number[] = [];
+        const t: number[] = [];
         for (let j = 0; j < INPUTCHUNKLENGTH; j++) {
-            let char = input.charCodeAt(i * INPUTCHUNKLENGTH + j);
+            const char = input.charCodeAt(i * INPUTCHUNKLENGTH + j);
             if (char) {
                 t.push(char);
             } else {
@@ -391,7 +391,7 @@ function toLetterCodes(input: string): number[][] {
 // convers from 12 8 bit numbers to 96 bits
 function convertToChunks(input: number[][]): number[][] {
     let i = 0;
-    let res: number[][] = [];
+    const res: number[][] = [];
 
     while (i < input.length) {
         for (let j = 0; j < INPUTCHUNKLENGTH; j++) {
@@ -433,15 +433,15 @@ export function hash(
         extended += input;
     }
 
-    let chunks: number[][] = convertToChunks(toLetterCodes(extended));
+    const chunks: number[][] = convertToChunks(toLetterCodes(extended));
 
     while (chunks.length >= 2) {
         chunks.push(merge(chunks.pop()!, chunks.pop()!));
     }
 
-    let compressed = compress(chunks[0], 300);
+    const compressed = compress(chunks[0], 300);
 
-    let res: string[] = [];
+    const res: string[] = [];
 
     for (let i = 0; i < OUTPUTLENGTH; i++) {
         res.push(
