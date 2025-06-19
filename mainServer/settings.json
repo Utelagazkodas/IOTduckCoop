@@ -1,0 +1,6 @@
+{
+    "tokenLength" : 64,
+    "idLength" : 16,
+    "saltLength" : 32,
+    "hashLength": 6 // note: this will be multiplied by 4 and that will be the output length, also DONT MAKE THIS TOO LARGE
+}
