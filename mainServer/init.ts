@@ -4,10 +4,11 @@ import {
   getInAPassword,
   getInAString,
   removeJSONcomments,
-} from "./util.ts";
+} from "./utility/util.ts";
 import { Database } from "@db/sqlite";
 import { hash } from "./hash.ts";
 import { generate } from "@alikia/random-key";
+import { runtimeData, settingsData } from "./utility/classes.ts";
 
 if (existsSync("./database")) {
   const resp = prompt(
@@ -29,12 +30,9 @@ if (adminPassword != getInAPassword("Admin password again: ")) {
 
 // gets in settings
 
-const settings: {
-  tokenLength: number;
-  idLength: number;
-  saltLength: number;
-  hashLength: number;
-} = JSON.parse(removeJSONcomments(Deno.readTextFileSync("./settings.json")));
+const settings: settingsData = JSON.parse(
+  removeJSONcomments(Deno.readTextFileSync("./settings.json")),
+);
 
 // removes the database
 try {
@@ -57,16 +55,13 @@ const adminPasswordHash = hash(
   settings.hashLength,
 );
 
-const data: {
-  adminPasswordHash: string;
-  adminSalt: string;
-  tokenLength: number;
-  idLength: number;
-  saltLength: number;
-  hashLength: number;
-} = {adminPasswordHash, adminSalt, tokenLength: settings.tokenLength, idLength: settings.idLength, saltLength: settings.saltLength ,hashLength : settings.hashLength};
+const data: runtimeData = {
+  adminPasswordHash,
+  adminSalt,
+  settingsData: settings
+};
 
-Deno.writeTextFile("./database/data.json", JSON.stringify(data))
+Deno.writeTextFile("./database/data.json", JSON.stringify(data));
 
-const sessionkv = await Deno.openKv("./database/sessionTokens.kv")
-sessionkv.close()
+const sessionkv = await Deno.openKv("./database/sessionTokens.kv");
+sessionkv.close();
