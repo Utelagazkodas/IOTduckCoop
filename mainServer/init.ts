@@ -1,6 +1,13 @@
 import { ensureDirSync, existsSync } from "@std/fs";
-import { getInAPassword, getInAString, removeJSONcomments } from "./util.ts";
+import {
+  addSalt,
+  getInAPassword,
+  getInAString,
+  removeJSONcomments,
+} from "./util.ts";
 import { Database } from "@db/sqlite";
+import { hash } from "./hash.ts";
+import { generate } from "@alikia/random-key";
 
 if (existsSync("./database")) {
   const resp = prompt(
@@ -29,7 +36,6 @@ const settings: {
   hashLength: number;
 } = JSON.parse(removeJSONcomments(Deno.readTextFileSync("./settings.json")));
 
-
 // removes the database
 try {
   Deno.removeSync("./database", { recursive: true });
@@ -38,5 +44,29 @@ try {
 ensureDirSync("./database");
 
 // creates the sql database
-const camdb = new Database("./database/sqlite.db", { create: true });
-camdb.exec(`CREATE TABLE cameras (token VARCHAR(${settings.tokenLength}) NOT NULL PRIMARY KEY, publicId VARCHAR(${settings.idLength}) NOT NULL, salt VARCHAR(${settings.saltLength}), )`);
+const camdb = new Database("./database/cam.db", { create: true });
+camdb.exec(
+  `CREATE TABLE cameras (token VARCHAR(${settings.tokenLength}) NOT NULL PRIMARY KEY, publicId VARCHAR(${settings.idLength}) NOT NULL, salt VARCHAR(${settings.saltLength}), connected BOOLEAN NOT NULL, email VARCHAR(254) NOT NULL)`,
+);
+
+// hashes the password and stores the data
+const adminSalt = await generate(settings.saltLength);
+
+const adminPasswordHash = hash(
+  addSalt(adminPassword, adminSalt),
+  settings.hashLength,
+);
+
+const data: {
+  adminPasswordHash: string;
+  adminSalt: string;
+  tokenLength: number;
+  idLength: number;
+  saltLength: number;
+  hashLength: number;
+} = {adminPasswordHash, adminSalt, tokenLength: settings.tokenLength, idLength: settings.idLength, saltLength: settings.saltLength ,hashLength : settings.hashLength};
+
+Deno.writeTextFile("./database/data.json", JSON.stringify(data))
+
+const sessionkv = await Deno.openKv("./database/sessionTokens.kv")
+sessionkv.close()

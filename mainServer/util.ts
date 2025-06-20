@@ -114,3 +114,7 @@ export function requireEnv(name: string): string {
   if (!value) throw new Error(`Missing required environment variable: ${name} \n You should init the project by running "deno task init"`);
   return value;
 }
+
+export function addSalt(toBeHashed : string, salt : string): string{
+    return `${salt}${toBeHashed}${salt}`
+}

@@ -1,6 +1,7 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@alikia/random-key@^1.0.1": "1.0.1",
     "jsr:@db/sqlite@0.12": "0.12.0",
     "jsr:@denosaurs/plug@1": "1.1.0",
     "jsr:@std/assert@0.217": "0.217.0",
@@ -17,6 +18,9 @@
     "jsr:@std/path@^1.1.0": "1.1.0"
   },
   "jsr": {
+    "@alikia/random-key@1.0.1": {
+      "integrity": "639c5b21e650291a489de817bb2c2ca143dfdbb7bcf2a39524ee7e2dc535e608"
+    },
     "@db/sqlite@0.12.0": {
       "integrity": "dd1ef7f621ad50fc1e073a1c3609c4470bd51edc0994139c5bf9851de7a6d85f",
       "dependencies": [
@@ -72,6 +76,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@alikia/random-key@^1.0.1",
       "jsr:@db/sqlite@0.12",
       "jsr:@std/cli@^1.0.20",
       "jsr:@std/fs@^1.0.18"
