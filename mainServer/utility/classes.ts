@@ -27,3 +27,13 @@ export interface loginData{
   passwordHash : string,
   oneTime : boolean
 }
+
+export interface createCamData{
+  sessionToken: string, 
+  email : string
+}
+
+export interface statusData{
+  emailHashes : {emailHash : string, salt : string}[],
+  settingsData : settingsData
+}

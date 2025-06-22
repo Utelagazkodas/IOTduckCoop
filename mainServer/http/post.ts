@@ -1,18 +1,28 @@
 import { generate } from "@alikia/random-key";
 import { RUNTIMEDATA, sessionTokenDB } from "../main.ts";
-import { loginData, sessionTokenData } from "../utility/classes.ts";
-import { addSessionToken } from "../utility/runtimeUtil.ts";
+import { createCamData, loginData, sessionTokenData } from "../utility/classes.ts";
+
 import { getUnixTime, isValidEmail } from "../utility/util.ts";
 
 const loginUrlPattern = new URLPattern({ pathname: "/login" });
+
+const createCamUrlPattern = new URLPattern({
+  pathname: "/createCam",
+});
 
 export async function post(
   req: Request,
   inf: Deno.ServeHandlerInfo<Deno.NetAddr>,
   url: URL,
 ): Promise<Response> {
+  // LOGIN
   if (loginUrlPattern.test(url)) {
-    const data: loginData = JSON.parse(await req.text());
+    let data: loginData;
+    try {
+      data = JSON.parse(await req.text());
+    } catch (_error) {
+      return new Response("Bad json in body or no data", { status: 422 });
+    }
 
     if (data.admin) {
       // handle errors and exceptions
@@ -33,27 +43,45 @@ export async function post(
       }
       // ADDS AN ADMIN SESSIONTOKEN
 
-      const newSessionTokenData : sessionTokenData = {admin: true, expiration: RUNTIMEDATA.settingsData.oneTimeLoginDuration + getUnixTime(), token : await generate(RUNTIMEDATA.settingsData.tokenLength)}
+      const newSessionTokenData: sessionTokenData = {
+        admin: true,
+        expiration: RUNTIMEDATA.settingsData.oneTimeLoginDuration +
+          getUnixTime(),
+        token: await generate(RUNTIMEDATA.settingsData.tokenLength),
+      };
 
-      sessionTokenDB.set([newSessionTokenData.token], newSessionTokenData)
-
+      sessionTokenDB.set([newSessionTokenData.token], newSessionTokenData);
+      return new Response();
     } else {
-      if (data.email) {
-        if (!isValidEmail(data.email)) {
-          return new Response(
-            "if you are not logging in as an admin a valid email is needed",
-            { status: 401 },
-          );
-        }
-
-        // ADDS A USER SESSION TOKEN
-      } else {
+      if (!data.email) {
         return new Response(
           "if you are not logging in as an admin an email is needed",
           { status: 401 },
         );
       }
+      if (!isValidEmail(data.email)) {
+        return new Response(
+          "if you are not logging in as an admin a valid email is needed",
+          { status: 401 },
+        );
+      }
+
+      // ADDS A USER SESSION TOKEN
+
+      // TODO
     }
+  }
+
+  // CREATE CAM
+  if (createCamUrlPattern.test(url)) {
+    let data: createCamData;
+    try {
+      data = JSON.parse(await req.text());
+    } catch (_error) {
+      return new Response("Bad json in body or no data", { status: 422 });
+    }
+
+    const sessionToken : sessionTokenData = (await sessionTokenDB.get([data.sessionToken])).value as sessionTokenData
   }
 
   return new Response("Bad POST request", { status: 400 });
