@@ -11,7 +11,7 @@ export const PORT = Number(requireEnv("PORT"))
 export const sessionTokenDB = await Deno.openKv("./database/sessionTokens.kv") 
 export const camDB = new Database("./database/cam.db")
 
-Deno.serve(handleRequest)
+Deno.serve({port: PORT},handleRequest)
 
 // handle closing the kv database on unload
 globalThis.addEventListener("unload", ()=>{

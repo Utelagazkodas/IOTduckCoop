@@ -5,13 +5,13 @@ export interface settingsData {
   hashLength: number;
   loginDuration : number,
   oneTimeLoginDuration : number
-}
+} // USED WHEN CREATING THE DATABASE AND LOADING
 
 export interface runtimeData {
   adminPasswordHash: string;
   adminSalt: string;
   settingsData : settingsData
-}
+} // ONLY USED IN THE SERVER FOR DATA THAT WILL BE LOADED DURING RUNTIME
 
 export interface sessionTokenData{
   token : string
@@ -19,21 +19,25 @@ export interface sessionTokenData{
   expiration : number,
   camPublicId? : string,
   email?: string
-}
+} // THE DATA THAT WILL BE SAVED FOR EACH LOGIN
 
 export interface loginData{
   admin : boolean,
   email? : string,
   passwordHash : string,
   oneTime : boolean
-}
+} // THE DATA THE CLIENT SEND THAT INDENTIFES THEM TO BE ELIGIBLE TO LOG IN
 
 export interface createCamData{
   sessionToken: string, 
   email : string
-}
+} // THE DATA THE ADMIN NEEDS TO SEND TO CREATE A CAMERA
 
 export interface statusData{
   emailHashes : {emailHash : string, salt : string}[],
   settingsData : settingsData
+} // THE DATA PUBLICLY AVAILABLE VIA THE PATH /STATUS
+
+export interface createCamResponse{
+  token : string
 }
