@@ -40,4 +40,4 @@ export interface statusData{
 
 export interface createCamResponse{
   token : string
-}
+} // THE DATA SENT BACK TO THE ADMIN WHEN CREATING A CAMERA

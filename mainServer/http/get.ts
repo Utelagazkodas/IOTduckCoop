@@ -40,5 +40,7 @@ export async function get(
     return new Response(JSON.stringify(tempStatusData), {status: 200})
   }
 
+  
+
   return new Response("Bad GET request", { status: 400 });
 }

@@ -2,7 +2,7 @@ import { generate } from "@alikia/random-key";
 import { camDB, RUNTIMEDATA, sessionTokenDB } from "../main.ts";
 import { createCamData, createCamResponse, loginData, sessionTokenData } from "../utility/classes.ts";
 
-import { addSalt, getUnixTime, isValidEmail } from "../utility/util.ts";
+import {  getUnixTime, isValidEmail } from "../utility/util.ts";
 import { hash } from "../hash.ts";
 
 const loginUrlPattern = new URLPattern({ pathname: "/login" });
@@ -10,6 +10,7 @@ const loginUrlPattern = new URLPattern({ pathname: "/login" });
 const createCamUrlPattern = new URLPattern({
   pathname: "/createCam",
 });
+
 
 export async function post(
   req: Request,
@@ -35,7 +36,7 @@ export async function post(
       }
       if (!data.oneTime) {
         return new Response(
-          "if you are trying to log in as an admin you can only have a one time login",
+          "if you are trying to log in as an admin you can only have a one time login", {status: 400}
         );
       }
 
@@ -69,7 +70,14 @@ export async function post(
 
       // ADDS A USER SESSION TOKEN
 
-      // TODO
+      const user = camDB.prepare("SELECT * FROM cameras WHERE passwordHash=?").all(data.passwordHash)[0]
+
+      console.log(user)
+      if(user){
+        console.log("asd")
+      }
+
+
     }
   }
 
@@ -92,6 +100,7 @@ export async function post(
         if(!data.email || !isValidEmail(data.email)){
           return new Response("invalid email", {status: 400})
         }
+
         // creates the data for the camera
         const salt = await generate(RUNTIMEDATA.settingsData.saltLength)
         const hashedEmail = hash(data.email, RUNTIMEDATA.settingsData.hashLength)
@@ -99,10 +108,11 @@ export async function post(
         const token = await generate(RUNTIMEDATA.settingsData.tokenLength)
 
         // puts the data in the database
-        camDB.exec(`INSERT INTO cameras (token, salt, emailHash, publicId, connected, email) VALUES ('${token}', '${salt}', '${hashedEmail}', '${publicId}', false, '${data.email}')` )
+        camDB.exec(`INSERT INTO cameras (token, salt, emailHash, publicId, connected, email) VALUES (?, ?, ?, ?, false, ?)`, token, salt,  hashedEmail, publicId, data.email)
         console.log("created cam for email: "+ data.email)
 
         const resp : createCamResponse= {token} 
+        return new Response(JSON.stringify(resp), {status: 200})
       }
       sessionTokenDB.delete([sessionToken.token])
     }
