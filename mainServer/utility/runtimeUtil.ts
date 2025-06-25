@@ -3,7 +3,7 @@ import { sessionTokenData } from "./classes.ts";
 import { getUnixTime } from "./util.ts";
 
 export class Authorization {
-  static auth(req: Request): Promise<Response | sessionTokenData> {
+  static async auth(req: Request): Promise<Response | sessionTokenData> {
     let authTokenHeader = req.headers.get("Authorization");
 
     if (!authTokenHeader) {
@@ -24,7 +24,7 @@ export class Authorization {
     if (sessionToken) {
       if (sessionToken.expiration > getUnixTime()) {
         
-
+        return sessionToken
 
       }
       sessionTokenDB.delete([sessionToken.token]);

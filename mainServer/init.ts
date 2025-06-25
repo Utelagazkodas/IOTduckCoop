@@ -44,7 +44,7 @@ ensureDirSync("./database");
 // creates the sql database
 const camdb = new Database("./database/cam.db", { create: true });
 camdb.exec(
-  `CREATE TABLE cameras (token VARCHAR(${settings.tokenLength}) NOT NULL PRIMARY KEY, publicId VARCHAR(${settings.idLength}) NOT NULL, salt VARCHAR(${settings.saltLength}), connected BOOLEAN NOT NULL, email VARCHAR(254) NOT NULL, emailHash VARCHAR(${settings.hashLength*3}) NOT NULL, passwordHash VARCHAR(${settings.hashLength*3}))`,
+  `CREATE TABLE cameras (token VARCHAR(${settings.tokenLength}) NOT NULL PRIMARY KEY, publicId VARCHAR(${settings.idLength}) NOT NULL, salt VARCHAR(${settings.saltLength}), connected BOOLEAN NOT NULL, email VARCHAR(254) NOT NULL, emailHash VARCHAR(${settings.hashLength*3}) NOT NULL, passwordHash VARCHAR(${settings.hashLength*3}), address TEXT NOT NULL)`,
 );
 
 // hashes the password and stores the data

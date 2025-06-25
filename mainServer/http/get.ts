@@ -1,8 +1,10 @@
 import { camDB, RUNTIMEDATA } from "../main.ts";
-import {statusData } from "../utility/classes.ts";
+import { cameraAdminData, statusData } from "../utility/classes.ts";
+import { Authorization } from "../utility/runtimeUtil.ts";
 import { handleWebsocket } from "../ws/websocket.ts";
 
-const statusUrlPattern = new URLPattern({pathname: "/status"})
+const statusUrlPattern = new URLPattern({ pathname: "/status" });
+const camerasAdminDataUrlPattern = new URLPattern({ pathname: "/adminData" });
 
 export async function get(
   req: Request,
@@ -30,14 +32,35 @@ export async function get(
     return response;
   }
 
-  if(statusUrlPattern.test(url)){
-  
+  if (statusUrlPattern.test(url)) {
     // gets email hashes
-    const emailHashes :  {emailHash : string, salt : string}[]= camDB.prepare("SELECT emailHash, salt FROM cameras").all()
+    const emailHashes: { emailHash: string; salt: string }[] = camDB.prepare(
+      "SELECT emailHash, salt FROM cameras",
+    ).all();
 
-    const tempStatusData : statusData = {emailHashes, settingsData: RUNTIMEDATA.settingsData}
+    const tempStatusData: statusData = {
+      emailHashes,
+      settingsData: RUNTIMEDATA.settingsData,
+    };
 
-    return new Response(JSON.stringify(tempStatusData), {status: 200})
+    return new Response(JSON.stringify(tempStatusData), { status: 200 });
+  }
+
+  if (camerasAdminDataUrlPattern.test(url)) {
+    const auth = await Authorization.auth(req);
+
+    if (auth instanceof Response) {
+      return auth;
+    }
+
+    if (!auth.admin) {
+      return new Response("unathorized", { status: 401 });
+    }
+    const data: cameraAdminData[] = camDB.prepare(
+      "SELECT token, publicId, salt, connected, email, emailHash, address FROM cameras",
+    ).all();
+
+    return new Response(JSON.stringify(data), { status: 200 });
   }
 
   return new Response("Bad GET request", { status: 400 });

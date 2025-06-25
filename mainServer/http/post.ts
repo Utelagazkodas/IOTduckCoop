@@ -1,16 +1,21 @@
 import { generate } from "@alikia/random-key";
 import { camDB, RUNTIMEDATA, sessionTokenDB } from "../main.ts";
-import { createCamData, createCamResponse, loginData, sessionTokenData } from "../utility/classes.ts";
+import {
+  createCamData,
+  createCamResponse,
+  loginData,
+  sessionTokenData,
+} from "../utility/classes.ts";
 
-import {  getUnixTime, isValidEmail } from "../utility/util.ts";
+import { getUnixTime, isValidEmail } from "../utility/util.ts";
 import { hash } from "../hash.ts";
+import { Authorization } from "../utility/runtimeUtil.ts";
 
 const loginUrlPattern = new URLPattern({ pathname: "/login" });
 
 const createCamUrlPattern = new URLPattern({
   pathname: "/createCam",
 });
-
 
 export async function post(
   req: Request,
@@ -36,7 +41,8 @@ export async function post(
       }
       if (!data.oneTime) {
         return new Response(
-          "if you are trying to log in as an admin you can only have a one time login", {status: 400}
+          "if you are trying to log in as an admin you can only have a one time login",
+          { status: 400 },
         );
       }
 
@@ -53,7 +59,7 @@ export async function post(
       };
 
       sessionTokenDB.set([newSessionTokenData.token], newSessionTokenData);
-      return new Response(JSON.stringify(newSessionTokenData), {status: 200});
+      return new Response(JSON.stringify(newSessionTokenData), { status: 200 });
     } else {
       if (!data.email) {
         return new Response(
@@ -70,14 +76,15 @@ export async function post(
 
       // ADDS A USER SESSION TOKEN
 
-      const user = camDB.prepare("SELECT * FROM cameras WHERE passwordHash=?").all(data.passwordHash)[0]
+      const user =
+        camDB.prepare("SELECT * FROM cameras WHERE passwordHash=?").all(
+          data.passwordHash,
+        )[0];
 
-      console.log(user)
-      if(user){
-        console.log("asd")
+      console.log(user);
+      if (user) {
+        console.log("asd");
       }
-
-
     }
   }
 
@@ -89,40 +96,44 @@ export async function post(
     } catch (_error) {
       return new Response("Bad json in body or no data", { status: 422 });
     }
-    const authTokenHeader =req.headers.get("Authorization")
-    if(!authTokenHeader){
-      return new Response("An 'Authorization' header is required")
+
+    const auth = await Authorization.auth(req);
+
+    if (auth instanceof Response) {
+      return auth;
     }
-    
-  
-    const sessionToken : sessionTokenData = (await sessionTokenDB.get([authTokenHeader])).value as sessionTokenData
 
-    if(sessionToken){
-      if(sessionToken.expiration > getUnixTime()){
-        if(!sessionToken.admin){
-          return new Response("unathorized", {status: 401})
-        }
-        if(!data.email || !isValidEmail(data.email)){
-          return new Response("invalid email", {status: 400})
-        }
-
-        // creates the data for the camera
-        const salt = await generate(RUNTIMEDATA.settingsData.saltLength)
-        const hashedEmail = hash(data.email, RUNTIMEDATA.settingsData.hashLength)
-        const publicId = await generate(RUNTIMEDATA.settingsData.idLength)
-        const token = await generate(RUNTIMEDATA.settingsData.tokenLength)
-
-        // puts the data in the database
-        camDB.exec(`INSERT INTO cameras (token, salt, emailHash, publicId, connected, email) VALUES (?, ?, ?, ?, false, ?)`, token, salt,  hashedEmail, publicId, data.email)
-        console.log("created cam for email: "+ data.email)
-
-        const resp : createCamResponse= {token} 
-        return new Response(JSON.stringify(resp), {status: 200})
-      }
-      sessionTokenDB.delete([sessionToken.token])
+    if (!auth.admin) {
+      return new Response("unathorized", { status: 401 });
     }
-    return new Response("invalid sessionToken", {status: 498})
+    if (!data.email || !isValidEmail(data.email)) {
+      return new Response("invalid email", { status: 400 });
+    }
 
+    if(!data.address){
+      return new Response("an address is needed", {status: 400})
+    }
+
+    // creates the data for the camera
+    const salt = await generate(RUNTIMEDATA.settingsData.saltLength);
+    const hashedEmail = hash(data.email, RUNTIMEDATA.settingsData.hashLength);
+    const publicId = await generate(RUNTIMEDATA.settingsData.idLength);
+    const token = await generate(RUNTIMEDATA.settingsData.tokenLength);
+
+    // puts the data in the database
+    camDB.exec(
+      `INSERT INTO cameras (token, salt, emailHash, publicId, connected, email, address) VALUES (?, ?, ?, ?, false, ?, ?)`,
+      token,
+      salt,
+      hashedEmail,
+      publicId,
+      data.email,
+      data.address
+    );
+    console.log("created cam for email: " + data.email);
+
+    const resp: createCamResponse = { token };
+    return new Response(JSON.stringify(resp), { status: 200 });
   }
 
   return new Response("Bad POST request", { status: 400 });
