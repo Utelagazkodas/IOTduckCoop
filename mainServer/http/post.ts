@@ -89,8 +89,13 @@ export async function post(
     } catch (_error) {
       return new Response("Bad json in body or no data", { status: 422 });
     }
+    const authTokenHeader =req.headers.get("Authorization")
+    if(!authTokenHeader){
+      return new Response("An 'Authorization' header is required")
+    }
+    
   
-    const sessionToken : sessionTokenData = (await sessionTokenDB.get([data.sessionToken])).value as sessionTokenData
+    const sessionToken : sessionTokenData = (await sessionTokenDB.get([authTokenHeader])).value as sessionTokenData
 
     if(sessionToken){
       if(sessionToken.expiration > getUnixTime()){

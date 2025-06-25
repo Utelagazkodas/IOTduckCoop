@@ -29,7 +29,6 @@ export interface loginData{
 } // THE DATA THE CLIENT SEND THAT INDENTIFES THEM TO BE ELIGIBLE TO LOG IN
 
 export interface createCamData{
-  sessionToken: string, 
   email : string
 } // THE DATA THE ADMIN NEEDS TO SEND TO CREATE A CAMERA
 

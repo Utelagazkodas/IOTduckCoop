@@ -1,5 +1,5 @@
 import { camDB, RUNTIMEDATA } from "../main.ts";
-import { statusData } from "../utility/classes.ts";
+import {statusData } from "../utility/classes.ts";
 import { handleWebsocket } from "../ws/websocket.ts";
 
 const statusUrlPattern = new URLPattern({pathname: "/status"})
@@ -39,8 +39,6 @@ export async function get(
 
     return new Response(JSON.stringify(tempStatusData), {status: 200})
   }
-
-  
 
   return new Response("Bad GET request", { status: 400 });
 }

@@ -3,6 +3,7 @@ import { handleRequest } from "./http.ts";
 import { runtimeData } from "./utility/classes.ts";
 import {  requireEnv } from "./utility/util.ts";
 import "@std/dotenv/load"
+import { Authorization } from "./utility/runtimeUtil.ts";
 
 export const RUNTIMEDATA : runtimeData = JSON.parse(Deno.readTextFileSync("./database/data.json"))
 

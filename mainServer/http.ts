@@ -1,5 +1,6 @@
 import { get } from "./http/get.ts";
 import { post } from "./http/post.ts";
+import { Authorization } from "./utility/runtimeUtil.ts";
 
 export async function handleRequest(
   req: Request,
@@ -9,6 +10,7 @@ export async function handleRequest(
   let resp: Response = new Response();
 
   console.log(`Incoming request: ${req.method} ${req.url}`);
+  Authorization.auth(req)
 
   // switches between the supported methods
   switch (req.method) {
