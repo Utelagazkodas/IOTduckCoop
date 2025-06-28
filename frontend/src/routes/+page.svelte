@@ -1,21 +1,22 @@
 <script>
-  import { IP, status, currentSessionToken, foundServer } from "$lib/api";
-  import { Stretch } from "svelte-loading-spinners";
-  import IpInput from "../components/IPInput.svelte";
-  import PasswordInput from "../components/PasswordInput.svelte";
-  import Main from "../components/Main.svelte";
+  import { IP, status, currentSessionToken, serverNotFound } from "$lib/api";
+  import Admin from "../components/Admin.svelte";
+  import CameraUser from "../components/CameraUser.svelte";
+  import Loading from "../components/Loading.svelte";
+  import LoginInput from "../components/LoginInput.svelte";
+  import ServerNotFound from "../components/ServerNotFound.svelte";
 </script>
 
 <div class="h-screen w-screen bg-teal-800">
-  {#if $foundServer === undefined}
-    <div class="h-screen w-screen flex items-center justify-center">
-      <Stretch />
-    </div>
-  {:else if $foundServer === false || !$status}
-    <IpInput />
-  {:else if $foundServer === true && $status && !$currentSessionToken}
-    <PasswordInput />
+  {#if !$currentSessionToken && !$status && $IP && $serverNotFound}
+    <ServerNotFound />
+  {:else if !$currentSessionToken && $status && $IP && !$serverNotFound}
+    <LoginInput />
+  {:else if $currentSessionToken && !$currentSessionToken.admin && $status && $IP && !$serverNotFound}
+    <CameraUser />
+  {:else if $currentSessionToken && $currentSessionToken.admin && $status && $IP && !$serverNotFound}
+    <Admin />
   {:else}
-    <Main />
+    <Loading />
   {/if}
 </div>

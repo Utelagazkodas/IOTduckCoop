@@ -1,0 +1,19 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/**.config.js": true,
+        "**/**.json": true,
+        ".npmrc": true,
+        "README.md": true,
+        "**/.gitignore": true,
+        "**/vite.config.ts": true,
+        "**/node_modules": true,
+        "**/.svelte-kit": true,
+        "**/.vscode": true
+    },
+}

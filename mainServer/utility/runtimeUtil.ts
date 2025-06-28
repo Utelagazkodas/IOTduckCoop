@@ -16,7 +16,6 @@ export class Authorization {
     if (authTokenHeader.startsWith("Bearer ")) {
       authTokenHeader = authTokenHeader.slice(7);
     }
-    console.log(authTokenHeader);
 
     const sessionToken: sessionTokenData =
       (await sessionTokenDB.get([authTokenHeader])).value as sessionTokenData;

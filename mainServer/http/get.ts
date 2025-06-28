@@ -34,11 +34,12 @@ export async function get(
 
   if (statusUrlPattern.test(url)) {
     // gets email hashes
-    const emailHashes: { emailHash: string; salt: string }[] = camDB.prepare(
-      "SELECT emailHash, salt FROM cameras",
+    const emailHashes: { emailHash: string; salt: string, connected : boolean }[] = camDB.prepare(
+      "SELECT emailHash, salt, connected FROM cameras",
     ).all();
 
     const tempStatusData: statusData = {
+      adminSalt: RUNTIMEDATA.adminSalt,
       emailHashes,
       settingsData: RUNTIMEDATA.settingsData,
     };

@@ -2,19 +2,31 @@
     import { logIn } from "$lib/api";
 
     let password = "";
+    let email = "";
     let stayLoggedIn = false;
 
-    let onClick = ()=>{logIn(password, !stayLoggedIn)}
+    let onClick = () => {
+        logIn(password, email, !stayLoggedIn);
+    };
 </script>
 
 <div class="w-full h-full flex justify-center items-center">
-    <div class="bg-teal-400 p-3 rounded-xl border-2 border-teal-950">
+    <div class="bg-teal-400 p-3 rounded-xl border-2 border-teal-950 ">
+        <input
+            type="text"
+            bind:value={email}
+            class="bg-teal-900 text-teal-50 py-0.5 px-1.5 rounded mb-1"
+            placeholder="email (leave blank for admin login)"
+        />
+        <br />
         <input
             type="text"
             bind:value={password}
             class="bg-teal-900 text-teal-50 py-0.5 px-1.5 rounded"
-            placeholder="password here!"
+            placeholder="password"
         />
+        
+
         <div class="w-full flex mt-1">
             <div>
                 Stay logged in <input
@@ -23,7 +35,10 @@
                 />
             </div>
             <div class="flex-1 flex items-end"></div>
-            <button class="hover:cursor-pointer bg-teal-900 text-teal-50 px-1.5 py-0.5 rounded" onclick={onClick}>Log In</button>
+            <button
+                class="hover:cursor-pointer bg-teal-900 text-teal-50 px-1.5 py-0.5 rounded"
+                onclick={onClick}>Log In</button
+            >
         </div>
     </div>
 </div>

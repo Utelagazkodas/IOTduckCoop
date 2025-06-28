@@ -6,7 +6,7 @@ import {
   removeJSONcomments,
 } from "./utility/util.ts";
 import { Database } from "@db/sqlite";
-import { hash } from "./hash.ts";
+import { hash } from "./utility/hash.ts";
 import { generate } from "@alikia/random-key";
 import { runtimeData, settingsData } from "./utility/classes.ts";
 

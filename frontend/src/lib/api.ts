@@ -1,45 +1,34 @@
 import { get, writable } from "svelte/store";
-import type { sessionToken, statusData } from "./classes";
-
+import type { loginData, sessionTokenData, statusData } from "./classes";
+import { hash } from "./hash";
+import { addSalt } from "./util";
 
 // Svelte reactive stores
 export const IP = writable<string | undefined>(undefined);
 export const status = writable<statusData | undefined>(undefined);
-export const currentSessionToken = writable<sessionToken | undefined>(
+export const serverNotFound = writable<boolean>(false)
+export const currentSessionToken = writable<sessionTokenData | undefined>(
   undefined,
 );
-export const foundServer = writable<boolean | undefined>(undefined);
 
-export async function initApi(ip?: string) {
-  let finalIP: string;
-
-  if (!ip) {
-    try {
-      finalIP = await (await fetch("/ip.txt", { method: "GET" })).text();
-    } catch (error) {
-      status.set(undefined);
-      IP.set(undefined);
-      foundServer.set(false);
-      return;
-    }
-  } else {
-    finalIP = ip;
-  }
-
+export async function initApi() {
+  serverNotFound.set(false)
+  IP.set(undefined)
+  currentSessionToken.set(undefined)
+  status.set(undefined)
+  IP.set(await (await fetch("/ip.txt", { method: "GET" })).text());
+  console.log(get(IP))
   try {
-    let resp = await fetch(finalIP + "status", { method: "GET" });
+    let resp = await fetch(get(IP) + "status", { method: "GET" });
     const parsed = JSON.parse(await resp.text());
     status.set(parsed);
-    IP.set(finalIP);
-    foundServer.set(true);
   } catch {
+    serverNotFound.set(true)
     status.set(undefined);
-    IP.set(undefined);
-    foundServer.set(false);
   }
 }
 
-export async function logIn(password: string, oneTime: boolean = true) {
+export async function logIn(password: string, email : string,oneTime: boolean = true) {
   const $status = get(status);
   const $IP = get(IP);
 
@@ -47,35 +36,11 @@ export async function logIn(password: string, oneTime: boolean = true) {
     throw "You need to establish a connection and have the IP to be able to log in";
   }
 
-  const passwordHashBuffer = await crypto.subtle.digest(
-    "SHA-512",
-    new TextEncoder().encode($status.salt + password + $status.salt),
-  );
-
-  const passwordHash = Array.from(new Uint8Array(passwordHashBuffer))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-
-
-
-  const data : {passwordHash : string} = { passwordHash };
-
-
-  if (oneTime) {
-    const resp = await fetch($IP + "login/one-time", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-
-    const result: sessionToken = await resp.json();
-    currentSessionToken.set(result); // Example update
-  } else {
-    const resp = await fetch($IP + "login/one-time", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-
-    const result: sessionToken = await resp.json();
-    currentSessionToken.set(result); // Example update
+  // ADMIN LOGIN
+  
+  if(email == ""){
+    oneTime = true
+    const send : loginData= {admin: true, oneTime, passwordHash: hash(addSalt(password, $status.adminSalt), $status.settingsData.hashLength)}
+    
   }
 }

@@ -13,6 +13,17 @@ export interface runtimeData {
   settingsData : settingsData
 } // ONLY USED IN THE SERVER FOR DATA THAT WILL BE LOADED DURING RUNTIME
 
+export interface databaseType {
+  token : string,
+  publicId : string,
+  salt : string,
+  connected : boolean,
+  email : string,
+  emailHash : string,
+  passwordHash : string,
+  address : string
+}
+
 export interface sessionTokenData{
   token : string
   admin : boolean,
@@ -34,13 +45,11 @@ export interface createCamData{
 } // THE DATA THE ADMIN NEEDS TO SEND TO CREATE A CAMERA
 
 export interface statusData{
-  emailHashes : {emailHash : string, salt : string}[],
+  adminSalt : string,
+  emailHashes : {emailHash : string, salt : string, connected : boolean}[],
   settingsData : settingsData
 } // THE DATA PUBLICLY AVAILABLE VIA THE PATH /STATUS
 
-export interface createCamResponse{
-  token : string
-} // THE DATA SENT BACK TO THE ADMIN WHEN CREATING A CAMERA
 
 export interface cameraAdminData{
   token : string,
@@ -51,3 +60,8 @@ export interface cameraAdminData{
   emailHash : string,
   address : string
 } // RETURNS AN ARRAY OF THESE ON /adminData WHEN AUTHORIZED AS ADMIN
+
+export interface deleteCamData{
+  publicId : string,
+  email : string
+} // THE DATA NEEDED TO REMOVE A CAMERA
