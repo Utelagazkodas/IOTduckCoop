@@ -30,7 +30,7 @@ export interface sessionTokenData{
   expiration : number,
   camPublicId? : string,
   email?: string
-} // THE DATA THAT WILL BE SAVED FOR EACH LOGIN
+} // THE DATA THAT WILL BE SAVED FOR EACH LOGIN, SENT OUT WHEN SOMEONE LOGS IN
 
 export interface loginData{
   admin : boolean,

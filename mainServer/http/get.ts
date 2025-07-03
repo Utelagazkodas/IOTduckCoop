@@ -32,6 +32,7 @@ export async function get(
     return response;
   }
 
+  // THE DATA PUBLICLY AVAILABLE
   if (statusUrlPattern.test(url)) {
     // gets email hashes
     const emailHashes: { emailHash: string; salt: string, connected : boolean }[] = camDB.prepare(
@@ -47,6 +48,7 @@ export async function get(
     return new Response(JSON.stringify(tempStatusData), { status: 200 });
   }
 
+  // THE DATA AVAILABLE TO ADMINS
   if (camerasAdminDataUrlPattern.test(url)) {
     const auth = await Authorization.auth(req);
 

@@ -5,8 +5,10 @@
     let email = "";
     let stayLoggedIn = false;
 
-    let onClick = () => {
-        logIn(password, email, !stayLoggedIn);
+    let errorMessage = ""
+
+    let onClick = async () => {
+        errorMessage = await logIn(password, email, !stayLoggedIn);
     };
 </script>
 
@@ -40,5 +42,10 @@
                 onclick={onClick}>Log In</button
             >
         </div>
+        {#if errorMessage != ""}
+             <div class="text-red-500">
+                {errorMessage}
+             </div>
+        {/if}
     </div>
 </div>

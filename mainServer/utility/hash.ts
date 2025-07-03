@@ -199,14 +199,14 @@ function hasAllCriteria(pass: string): boolean {
   );
 }
 
-//old lookup table: bcdfgjpqrstvwxzDFGHLMNPQWXYZ1236789!@#%^&*()-_=+[]{}|;:',.<>?/\`~
 //new lookup ascii lookup table from 33-126 (first: ! last: ~)  (lenghts should be 93)
 // then we take out all vowels (lower and uppercase)                                        (new length should be 83)
-// take out the most 6 most common consonants in the first shrek movies script (t,n,h,r,s,l) (new length should be 71)
+// take out the most 6 most common consonants in the first shrek movies script (t,n,h,r,s,l (and uppercase)) (new length should be 71)
 // take out letters that look like S ( $)     (70)
-// take out the remaining first 4 letters of the ABC (b,c,d)
+// take out ', ", \ and ` for technical reasons (JSON) (66)
+// take out K (k, K) because Attila said so 
 const lookupTable: string[] =
-  `!"#%&'()*+,-./0123456789:;<=>?@FGJKMPQVWXYZ[\]^_${"`"}fgjkmpqvwxyz{|}~`
+  `!#%&()*+,-./0123456789:;<=>?@BCDFGJMPQVWXYZ[]^_bcdfgjmpqvwxyz{|}~`
     .split(
       "",
     );
