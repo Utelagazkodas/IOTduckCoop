@@ -1,42 +1,9 @@
-import { get, writable } from "svelte/store";
-import type { loginData, sessionTokenData, statusData } from "./classes";
-import { hash } from "./hash";
-import { addSalt } from "./util";
-
-// Svelte reactive stores
-export const IP = writable<string | undefined>(undefined);
-export const status = writable<statusData | undefined>(undefined);
-export const serverNotFound = writable<boolean>(false);
-export const currentSessionToken = writable<sessionTokenData | undefined>(
-  undefined,
-);
-
-export async function initApi() {
-  serverNotFound.set(false);
-  IP.set(undefined);
-  currentSessionToken.set(undefined);
-  status.set(undefined);
-  IP.set(await (await fetch("/ip.txt", { method: "GET" })).text());
-  try {
-    let resp = await fetch(get(IP) + "status", { method: "GET" });
-    const parsed = JSON.parse(await resp.text());
-    status.set(parsed);
-  } catch {
-    serverNotFound.set(true);
-    status.set(undefined);
-  }
-}
-
-export async function getGeneralStatus() {
-  try {
-    let resp = await fetch(get(IP) + "status", { method: "GET" });
-    const parsed = JSON.parse(await resp.text());
-    status.set(parsed);
-  } catch {
-    serverNotFound.set(true);
-    status.set(undefined);
-  }
-}
+import { get } from "svelte/store";
+import { getGeneralStatus } from "./network";
+import { currentSessionToken, IP, status } from "./stores";
+import type { loginData } from "$lib/util/classes";
+import { hash } from "$lib/util/hash";
+import { addSalt } from "$lib/util/util";
 
 export async function logIn(
   password: string,
@@ -116,18 +83,14 @@ export async function logIn(
   } catch (error) {
     switch (body) {
       case "wrong password":
-        if(send.admin){
-          return "Wrong admin password"
+        if (send.admin) {
+          return "Wrong admin password";
+        } else {
+          return "Wrong password";
         }
-        else{
-          return "Wrong password"
-        }
-        
-
 
       default:
         return "error";
-        
     }
   }
 

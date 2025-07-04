@@ -1,5 +1,6 @@
 <script>
-    import { logIn } from "$lib/api";
+    import { logIn } from "$lib/api/login";
+
 
     let password = "";
     let email = "";
