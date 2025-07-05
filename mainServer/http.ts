@@ -1,6 +1,7 @@
 import { get } from "./http/get.ts";
 import { post } from "./http/post.ts";
 import { Authorization } from "./utility/runtimeUtil.ts";
+import {del} from "./http/delete.ts"
 
 export async function handleRequest(
   req: Request,
@@ -10,7 +11,6 @@ export async function handleRequest(
   let resp: Response = new Response();
 
   console.log(`Incoming request: ${req.method} ${req.url}`);
-  Authorization.auth(req)
 
   // switches between the supported methods
   switch (req.method) {
@@ -20,6 +20,9 @@ export async function handleRequest(
     case "POST":
       resp = await post(req, inf, url);
       break;
+    case "DELETE":
+      resp = await del(req,inf,url)
+      break;
     default:
       return new Response("Method is not supported", { status: 405 });
   }
@@ -27,7 +30,7 @@ export async function handleRequest(
   // tries adding access control allow origin to all responses because it is needed so it works even when its a different ip and shit, it will ALWAYS fail when websocket is trying to connect
   try {
     resp.headers.set("Access-Control-Allow-Origin", "*"); // Allows requests from any origin
-  } catch (_e) { /**/ }
-  
+  } catch (_e) { /* */}
+
   return resp;
 }

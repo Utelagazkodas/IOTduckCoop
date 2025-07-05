@@ -1,9 +1,11 @@
 import { get } from "svelte/store";
 import { getGeneralStatus } from "./network";
 import { currentSessionToken, IP, status } from "./stores";
-import type { loginData } from "$lib/util/classes";
+import type { loginData, sessionTokenData } from "$lib/util/classes";
 import { hash } from "$lib/util/hash";
-import { addSalt } from "$lib/util/util";
+import { addSalt, getUnixTime } from "$lib/util/util";
+import { removeCookie, setCookie } from "typescript-cookie";
+import { getAdminData } from "./admin";
 
 export async function logIn(
   password: string,
@@ -94,5 +96,69 @@ export async function logIn(
     }
   }
 
+  if(send.admin){
+    getAdminData()
+  }
+
+  setCookie("sessionToken", JSON.stringify(get(currentSessionToken)), {
+    expires: (get(currentSessionToken)!.expiration - getUnixTime()) /
+      (60 * 60 * 24),
+  });
   return "";
+}
+
+export async function checkSessionToken(
+  toCheck?: sessionTokenData,
+): Promise<void> {
+  const curIP = get(IP);
+  const curSessionToken = toCheck ? toCheck : get(currentSessionToken);
+  const curStatus = get(status);
+
+  if (!curIP || !curSessionToken || !curStatus) {
+
+    throw "an ip, a sessiontoken and a status (being connected to the server) is required to check the validity of your current token";
+  }
+
+  if (curSessionToken.expiration < getUnixTime()) {
+    removeCookie("sessionToken");
+
+    currentSessionToken.set(undefined);
+    return;
+  }
+
+  let resp: Response;
+  try {
+    resp = await fetch(curIP + "sessionTokenCheck", {
+      method: "POST",
+      headers: { "auth": curSessionToken.token },
+    });
+  } catch (error) {
+    removeCookie("sessionToken");
+
+    currentSessionToken.set(undefined);
+    getGeneralStatus();
+    return;
+  }
+
+  if (resp.status != 200) {
+    removeCookie("sessionToken");
+
+    currentSessionToken.set(undefined);
+    return;
+  }
+
+  const body = await resp.text();
+  try {
+    currentSessionToken.set(JSON.parse(body));
+  } catch (error) {
+    removeCookie("sessionToken");
+    currentSessionToken.set(undefined);
+    return;
+  }
+
+  setCookie("sessionToken", JSON.stringify(get(currentSessionToken)), {
+    expires: (get(currentSessionToken)!.expiration - getUnixTime()) /
+      (60 * 60 * 24),
+  });
+  return;
 }

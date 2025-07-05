@@ -22,12 +22,20 @@ export class Authorization {
 
     if (sessionToken) {
       if (sessionToken.expiration > getUnixTime()) {
-        
-        return sessionToken
-
+        return sessionToken;
       }
       sessionTokenDB.delete([sessionToken.token]);
     }
     return new Response("invalid sessionToken", { status: 498 });
+  }
+}
+
+// FOR DEBUG PURPOSES CAN BE REMOVED LATER
+export async function listSessionTokens(): Promise<void> {
+  const everyKey: Deno.KvEntry<sessionTokenData>[] = await Array.fromAsync(
+    sessionTokenDB.list({ prefix: [] }),
+  );
+  for (let i = 0; i < everyKey.length; i++) {
+    console.log(everyKey[i]);
   }
 }

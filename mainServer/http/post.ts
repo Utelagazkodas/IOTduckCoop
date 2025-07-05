@@ -19,9 +19,7 @@ const createCamUrlPattern = new URLPattern({
   pathname: "/createCam",
 });
 
-const deleteCamUrlPattern = new URLPattern({
-  pathname: "/deleteCam",
-});
+
 
 export async function post(
   req: Request,
@@ -179,38 +177,6 @@ export async function post(
     return new Response(JSON.stringify(resp[0]), { status: 200 });
   }
 
-  if (deleteCamUrlPattern.test(url)) {
-    const auth = await Authorization.auth(req);
-
-    if (auth instanceof Response) {
-      return auth;
-    }
-
-    if (!auth.admin) {
-      return new Response("unathorized", { status: 401 });
-    }
-
-    let data: deleteCamData;
-    try {
-      data = JSON.parse(await req.text());
-    } catch (_error) {
-      return new Response("Bad json in body or no data", { status: 422 });
-    }
-
-    if (
-      camDB.exec(
-        "DELETE FROM cameras WHERE publicId=? AND email=?",
-        data.publicId,
-        data.email,
-      ) != 1
-    ) {
-      return new Response("Something went wrong, id probably doesnt exist", {
-        status: 500,
-      });
-    }
-
-    return new Response("Deleted camera", { status: 200 });
-  }
 
   return new Response("Bad POST request", { status: 400 });
 }

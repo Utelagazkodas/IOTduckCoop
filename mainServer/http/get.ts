@@ -5,6 +5,7 @@ import { handleWebsocket } from "../ws/websocket.ts";
 
 const statusUrlPattern = new URLPattern({ pathname: "/status" });
 const camerasAdminDataUrlPattern = new URLPattern({ pathname: "/adminData" });
+const sessionTokenValidityUrlPattern= new URLPattern({pathname: "/sessionTokenCheck"})
 
 export async function get(
   req: Request,
@@ -64,6 +65,17 @@ export async function get(
     ).all();
 
     return new Response(JSON.stringify(data), { status: 200 });
+  }
+
+    // YOU CAN VALIDATE YOUR TOKEN ON /sessionTokenCheck
+  if (sessionTokenValidityUrlPattern.test(url)) {
+    const auth = await Authorization.auth(req);
+
+    if (auth instanceof Response) {
+      return auth;
+    }
+
+    return new Response(JSON.stringify(auth), { status: 200 });
   }
 
   return new Response("Bad GET request", { status: 400 });
