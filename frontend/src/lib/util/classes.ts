@@ -65,3 +65,8 @@ export interface deleteCamData{
   publicId : string,
   email : string
 } // THE DATA NEEDED TO REMOVE A CAMERA
+
+
+export interface logoutData{
+  everywhere : boolean
+} // THE DATA NEEDED TO LOG OUT (/logout, method: DELETE), if everywhere is false it only removes that sessiontoken if true it removes every sessiontoken that is associated with that camera / admin, the token needs to be in the auth

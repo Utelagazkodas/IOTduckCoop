@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { getGeneralStatus } from "./network";
 import { currentSessionToken, IP, status } from "./stores";
-import type { loginData, sessionTokenData } from "$lib/util/classes";
+import type { loginData, logoutData, sessionTokenData } from "$lib/util/classes";
 import { hash } from "$lib/util/hash";
 import { addSalt, getUnixTime } from "$lib/util/util";
 import { removeCookie, setCookie } from "typescript-cookie";
@@ -96,8 +96,8 @@ export async function logIn(
     }
   }
 
-  if(send.admin){
-    getAdminData()
+  if (send.admin) {
+    getAdminData();
   }
 
   setCookie("sessionToken", JSON.stringify(get(currentSessionToken)), {
@@ -115,7 +115,6 @@ export async function checkSessionToken(
   const curStatus = get(status);
 
   if (!curIP || !curSessionToken || !curStatus) {
-
     throw "an ip, a sessiontoken and a status (being connected to the server) is required to check the validity of your current token";
   }
 
@@ -129,8 +128,8 @@ export async function checkSessionToken(
   let resp: Response;
   try {
     resp = await fetch(curIP + "sessionTokenCheck", {
-      method: "POST",
-      headers: { "auth": curSessionToken.token },
+      method: "GET",
+      headers: { "Authorization": curSessionToken.token },
     });
   } catch (error) {
     removeCookie("sessionToken");
@@ -161,4 +160,20 @@ export async function checkSessionToken(
       (60 * 60 * 24),
   });
   return;
+}
+
+export async function logOut(everywhere: boolean): Promise<void> {
+  const curIP = get(IP);
+  const curSessionToken = get(currentSessionToken);
+  const curStatus = get(status);
+
+  if (!curIP || !curSessionToken || !curStatus) {
+    throw "an ip, a sessiontoken and a status (being connected to the server) is required to log out";
+  }
+
+  fetch(curIP + "logout", {method: "DELETE", headers: { "Authorization": curSessionToken.token }, body: JSON.stringify({everywhere} as logoutData)})
+
+  currentSessionToken.set(undefined)
+  removeCookie("sessionToken");
+  return
 }

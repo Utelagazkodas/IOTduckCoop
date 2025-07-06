@@ -5,7 +5,9 @@ import { handleWebsocket } from "../ws/websocket.ts";
 
 const statusUrlPattern = new URLPattern({ pathname: "/status" });
 const camerasAdminDataUrlPattern = new URLPattern({ pathname: "/adminData" });
-const sessionTokenValidityUrlPattern= new URLPattern({pathname: "/sessionTokenCheck"})
+const sessionTokenValidityUrlPattern = new URLPattern({
+  pathname: "/sessionTokenCheck",
+});
 
 export async function get(
   req: Request,
@@ -36,7 +38,11 @@ export async function get(
   // THE DATA PUBLICLY AVAILABLE
   if (statusUrlPattern.test(url)) {
     // gets email hashes
-    const emailHashes: { emailHash: string; salt: string, connected : boolean }[] = camDB.prepare(
+    const emailHashes: {
+      emailHash: string;
+      salt: string;
+      connected: boolean;
+    }[] = camDB.prepare(
       "SELECT emailHash, salt, connected FROM cameras",
     ).all();
 
@@ -67,7 +73,7 @@ export async function get(
     return new Response(JSON.stringify(data), { status: 200 });
   }
 
-    // YOU CAN VALIDATE YOUR TOKEN ON /sessionTokenCheck
+  // YOU CAN VALIDATE YOUR TOKEN ON /sessionTokenCheck
   if (sessionTokenValidityUrlPattern.test(url)) {
     const auth = await Authorization.auth(req);
 

@@ -23,6 +23,8 @@ export async function handleRequest(
     case "DELETE":
       resp = await del(req,inf,url)
       break;
+    case "OPTIONS":
+      return new Response(null, {status: 200, headers: {"Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Methods" : "GET, POST, OPTIONS, DELETE", "Access-Control-Allow-Headers" : "Authorization"}})
     default:
       return new Response("Method is not supported", { status: 405 });
   }
