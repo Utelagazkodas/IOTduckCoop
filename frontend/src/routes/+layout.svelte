@@ -3,7 +3,7 @@
 	
 	let { children } = $props();
 
-	import { initApi } from "$lib/api"
+	import { initApi } from '$lib/api/api';
     import { onMount } from 'svelte';
 
 	onMount(initApi)
