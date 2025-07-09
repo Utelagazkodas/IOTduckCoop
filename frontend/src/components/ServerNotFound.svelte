@@ -1,1 +1,1 @@
-server not found
+server not found, you should try again later

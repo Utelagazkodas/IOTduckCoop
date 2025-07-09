@@ -4,7 +4,6 @@ import {
   cameraAdminData,
   createCamData,
   databaseType,
-  deleteCamData,
   loginData,
   sessionTokenData,
 } from "../utility/classes.ts";

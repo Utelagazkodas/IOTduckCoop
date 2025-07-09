@@ -1,5 +1,5 @@
 import { sessionTokenDB } from "../main.ts";
-import { sessionTokenData } from "./classes.ts";
+import { sessionTokenData, websocketCamAuth, websocketUserAuth } from "./classes.ts";
 import { getUnixTime } from "./util.ts";
 
 export class Authorization {
@@ -38,4 +38,19 @@ export async function listSessionTokens(): Promise<void> {
   for (let i = 0; i < everyKey.length; i++) {
     console.log(everyKey[i]);
   }
+}
+
+
+export function isWebsocketCamAuth(obj: any): obj is websocketCamAuth {
+ return hasKeys<websocketCamAuth>(obj, ["token", "passwordHash"]);
+}
+
+export function isWebsocketUserAuth(obj: any): obj is websocketUserAuth {
+  return hasKeys<websocketUserAuth>(obj, ["sessionToken"]);
+}
+
+function hasKeys<T extends object>(obj: any, keys: (keyof T)[]): obj is T {
+  return typeof obj === "object" &&
+         obj !== null &&
+         keys.every((key) => key in obj);
 }
