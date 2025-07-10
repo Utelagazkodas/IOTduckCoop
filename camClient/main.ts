@@ -1,2 +1,5 @@
-const response = await fetch("http://0.0.0.0:8000")
-console.log(await response.text())
+import "@std/dotenv/load"
+import { requireEnv } from "./utility/util.ts";
+
+export const PORT = Number(requireEnv("PORT"))
+export const WSIP = requireEnv("WSIP")

@@ -112,10 +112,14 @@
                 />
             </svg>
         </button>
+        <span class="hover:text-black text-transparent transition-all">
         <input
+        
                     type="checkbox"
                     bind:checked={globalLogout}
                 />
+                Log out everywhere
+        </span>
     </div>
 
     <!-- ADD CAMERA STUFF-->
