@@ -62,25 +62,25 @@ export function getInAString(promptText: string, minLength?: number, maxLength?:
     return ret
 }
 
-export function getInAPassword(promptText: string, minLength?: number, maxLength?: number): string{
+export function getInAPassword(promptText: string, minLength?: number, maxLength?: number, clear? : boolean): string{
         let ret: string | null
 
-    ret = promptSecret(promptText)
+    ret = promptSecret(promptText, {clear})
 
     while (!ret || (minLength && ret.length < minLength) || (maxLength && maxLength < ret.length)) {
         if (!ret) {
             console.error("The input wasnt a number or there was a miscalenous error, try again")
-            ret = promptSecret(promptText)
+            ret = promptSecret(promptText, {clear})
             continue
         }
         if (minLength && ret.length < minLength) {
             console.error("The input needs to be longer than " + minLength)
-            ret = promptSecret(promptText)
+            ret = promptSecret(promptText, {clear})
             continue
         }
         if (maxLength && maxLength < ret.length) {
             console.error("The input needs to be shorter than " + maxLength)
-            ret = promptSecret(promptText)
+            ret = promptSecret(promptText, {clear})
             continue
         }
     }
@@ -124,4 +124,8 @@ export function isValidEmail(email: string): boolean {
   // deno-lint-ignore no-control-regex
   const pattern : RegExp = /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/i;
   return pattern.test(email);
+}
+
+export function useIp(ip : string, protocol : string, directory : string) : string {
+    return `${protocol}://${ip}${directory}`
 }

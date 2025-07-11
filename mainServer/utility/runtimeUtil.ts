@@ -28,6 +28,19 @@ export class Authorization {
     }
     return new Response("invalid sessionToken", { status: 498 });
   }
+
+  static async authToken(token : string) : Promise<string | sessionTokenData>{
+    const sessionToken: sessionTokenData =
+      (await sessionTokenDB.get([token])).value as sessionTokenData;
+
+    if (sessionToken) {
+      if (sessionToken.expiration > getUnixTime()) {
+        return sessionToken;
+      }
+      sessionTokenDB.delete([sessionToken.token]);
+    }
+    return "invalid sessionToken";
+  }
 }
 
 // FOR DEBUG PURPOSES CAN BE REMOVED LATER

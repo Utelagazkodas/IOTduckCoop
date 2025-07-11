@@ -1,5 +1,9 @@
 import { camDB, RUNTIMEDATA } from "../main.ts";
-import { cameraAdminData, statusData } from "../utility/classes.ts";
+import {
+  cameraAdminData,
+  databaseType,
+  statusData,
+} from "../utility/classes.ts";
 import { Authorization } from "../utility/runtimeUtil.ts";
 import { handleWebsocket } from "../ws/websocket.ts";
 
@@ -8,6 +12,7 @@ const camerasAdminDataUrlPattern = new URLPattern({ pathname: "/adminData" });
 const sessionTokenValidityUrlPattern = new URLPattern({
   pathname: "/sessionTokenCheck",
 });
+const cameraDataUrlPattern = new URLPattern({ pathname: "/cameraData" });
 
 export async function get(
   req: Request,
@@ -82,6 +87,21 @@ export async function get(
     }
 
     return new Response(JSON.stringify(auth), { status: 200 });
+  }
+
+  // GET THE CAMERA DATA ON /cameraData !!! TOKEN NEEDS TO BE IN token HEADER
+  if (cameraDataUrlPattern.test(url)) {
+    const tokenHeader = req.headers.get("token");
+
+    const camData: databaseType[] = camDB.prepare(
+      "SELECT * FROM cameras WHERE token=?",
+    ).all(tokenHeader) as databaseType[];
+
+    if (!camData || camData.length == 0) {
+      return new Response("unathorized", {status: 401})
+    }
+
+    return new Response(JSON.stringify(camData[0]), {status: 200})
   }
 
   return new Response("Bad GET request", { status: 400 });

@@ -60,6 +60,7 @@ export async function logIn(
     }
 
     send = {
+      email: email,
       admin: false,
       oneTime,
       passwordHash: hash(
@@ -68,6 +69,7 @@ export async function logIn(
       ),
     };
   }
+
 
   let resp: Response;
   try {
@@ -92,7 +94,7 @@ export async function logIn(
         }
 
       default:
-        return "error";
+        return body;
     }
   }
 

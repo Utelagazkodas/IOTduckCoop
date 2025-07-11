@@ -2,7 +2,7 @@ import { get } from "svelte/store";
 import { currentSessionToken, IP, serverNotFound, status } from "./stores";
 import { getCookie, removeCookie } from "typescript-cookie";
 import type { sessionTokenData } from "$lib/util/classes";
-import { getUnixTime } from "$lib/util/util";
+import { getUnixTime, useIp } from "$lib/util/util";
 import { checkSessionToken } from "./login";
 
 export async function initApi() {
@@ -13,7 +13,7 @@ export async function initApi() {
     status.set(undefined);
 
     // gets ip
-    IP.set(await (await fetch("/ip.txt", { method: "GET" })).text());
+    IP.set(useIp(await (await fetch("/ip.txt", { method: "GET" })).text(), "http", "/"));
 
     // tries getting the status
     try {
