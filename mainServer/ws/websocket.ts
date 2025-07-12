@@ -1,6 +1,7 @@
-import { camDB, RUNTIMEDATA } from "../main.ts";
+import { camDB, RUNTIMEDATA, sessionTokenDB } from "../main.ts";
 import {
   databaseType,
+  sessionTokenData,
   type websocketCamAuth,
   type websocketUserAuth,
 } from "../utility/classes.ts";
@@ -8,6 +9,7 @@ import {
   isWebsocketCamAuth,
   isWebsocketUserAuth,
 } from "../utility/runtimeUtil.ts";
+import { getUnixTime } from "../utility/util.ts";
 
 export function handleWebsocket(socket: WebSocket) {
   // the auth object of the current websocket
@@ -48,16 +50,30 @@ export function handleWebsocket(socket: WebSocket) {
 
         const token = auth.token;
 
-        socket.addEventListener("close", () => {
+        socket.addEventListener("close", async () => {
+          // logs everyone out from that camera
+          const everyKey: Deno.KvEntry<sessionTokenData>[] = await Array
+            .fromAsync(
+              sessionTokenDB.list({ prefix: [] }),
+            );
+
+          const curTime: number = getUnixTime();
+          for (let i = 0; i < everyKey.length; i++) {
+            if (
+              (camData[0].publicId == everyKey[i].value.camPublicId) ||
+              (everyKey[i].value.expiration < curTime)
+            ) {
+              sessionTokenDB.delete(everyKey[i].key);
+            }
+          }
+
+          // sets it to disconnected and forgets the passwordhash
           camDB.exec(
             `UPDATE cameras SET connected=0, passwordHash=null WHERE token='${token}'`,
           );
         });
 
         socket.addEventListener("error", () => {
-          camDB.exec(
-            `UPDATE cameras SET connected=0, passwordHash=null WHERE token='${token}'`,
-          );
           socket.close();
         });
         return;
@@ -69,6 +85,15 @@ export function handleWebsocket(socket: WebSocket) {
           "bad first message, it needs to json either websocketCamAuth or websocketUserAuth",
         );
       }
+    }
+    else if(isWebsocketCamAuth(auth)){
+      // MESSAGE FROM CAM
+    }
+    else if(isWebsocketUserAuth(auth)){
+      // MESSAGE FROM USER
+    }
+    else{
+      socket.close()
     }
   });
 }

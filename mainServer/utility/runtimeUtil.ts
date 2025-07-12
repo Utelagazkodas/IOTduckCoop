@@ -10,7 +10,7 @@ export class Authorization {
       return new Response(
         "An 'Authorization' is required containing a sessiontoken, it can be a bearer or just the pure token as is",
         { status: 400 },
-      );
+      ); 
     }
 
     if (authTokenHeader.startsWith("Bearer ")) {
