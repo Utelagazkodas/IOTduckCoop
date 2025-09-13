@@ -1,0 +1,8 @@
+{
+    "tokenLength" : 64,
+    "idLength" : 32,
+    "saltLength" : 32,
+    "hashLength": 6, // note: this will be multiplied by 4 and that will be the output length, also DONT MAKE THIS TOO LARGE IT EXPONENTIALL GETS SLOWER TO COMPUTE
+    "loginDuration": 604800, //how long a normal login is valid for
+    "oneTimeLoginDuration": 3600 // how long a one time login is vlaid for
+}
