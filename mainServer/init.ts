@@ -6,9 +6,9 @@ import {
   removeJSONcomments,
 } from "./utility/util.ts";
 import { Database } from "@db/sqlite";
-import { hash } from "./utility/hash.ts";
+import { hash } from "../shared/hash.ts";
 import { generate } from "@alikia/random-key";
-import { runtimeData, settingsData } from "./utility/classes.ts";
+import { runtimeData, settingsData } from "../shared/classes.ts";
 
 if (existsSync("./database")) {
   const resp = prompt(
@@ -44,7 +44,7 @@ ensureDirSync("./database");
 // creates the sql database
 const camdb = new Database("./database/cam.db", { create: true });
 camdb.exec(
-  `CREATE TABLE cameras (token VARCHAR(${settings.tokenLength}) NOT NULL PRIMARY KEY, publicId VARCHAR(${settings.idLength}) NOT NULL, salt VARCHAR(${settings.saltLength}), connected BOOLEAN NOT NULL, email VARCHAR(254) NOT NULL, emailHash VARCHAR(${settings.hashLength*3}) NOT NULL, passwordHash VARCHAR(${settings.hashLength*3}), address TEXT NOT NULL)`,
+  `CREATE TABLE cameras (publicId VARCHAR(${settings.idLength}) NOT NULL PRIMARY KEY, token VARCHAR(${settings.tokenLength}) NOT NULL, salt VARCHAR(${settings.saltLength}), connected BOOLEAN NOT NULL, email VARCHAR(254) NOT NULL, emailHash VARCHAR(${settings.hashLength*3}) NOT NULL, passwordHash VARCHAR(${settings.hashLength*3}), address TEXT NOT NULL)`,
 );
 
 // hashes the password and stores the data

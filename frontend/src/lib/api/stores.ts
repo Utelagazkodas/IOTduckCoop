@@ -1,4 +1,4 @@
-import {type cameraAdminData, type sessionTokenData, type statusData } from "$lib/util/classes";
+import {type cameraAdminData, type sessionTokenData, type statusData } from "@classes";
 import { writable } from "svelte/store";
 
 // Svelte reactive stores
@@ -9,4 +9,7 @@ export const currentSessionToken = writable<sessionTokenData | undefined>(
   undefined,
 );
 
+// admin stores
 export const adminData = writable<cameraAdminData[] | undefined>(undefined)
+
+// user stores

@@ -1,5 +1,5 @@
 import { sessionTokenDB } from "../main.ts";
-import { sessionTokenData, websocketCamAuth, websocketUserAuth } from "./classes.ts";
+import { sessionTokenData, websocketCamAuth, websocketUserAuth, WSPasswordChange, WSRelay } from "../../shared/classes.ts";
 import { getUnixTime } from "./util.ts";
 
 export class Authorization {
@@ -62,7 +62,15 @@ export function isWebsocketUserAuth(obj: any): obj is websocketUserAuth {
   return hasKeys<websocketUserAuth>(obj, ["sessionToken"]);
 }
 
-function hasKeys<T extends object>(obj: any, keys: (keyof T)[]): obj is T {
+export function isWSRelay(obj: any): obj is WSRelay {
+ return hasKeys<WSRelay>(obj, ["relay"]);
+}
+
+export function isWSPasswordChange(obj: any): obj is WSPasswordChange {
+  return hasKeys<WSPasswordChange>(obj, ["passwordHash"]);
+}
+
+function hasKeys<T extends object>(obj : any, keys: (keyof T)[]): obj is T {
   return typeof obj === "object" &&
          obj !== null &&
          keys.every((key) => key in obj);

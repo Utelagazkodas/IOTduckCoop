@@ -46,7 +46,7 @@ export interface createCamData{
 
 export interface statusData{
   adminSalt : string,
-  emailHashes : {emailHash : string, salt : string, connected : boolean}[],
+  emailHashes : {emailHash : string, salt : string, connected : boolean, publicId : string}[],
   settingsData : settingsData
 } // THE DATA PUBLICLY AVAILABLE VIA THE PATH /STATUS
 
@@ -73,9 +73,32 @@ export interface logoutData{
 
 export interface websocketCamAuth{
   token : string,
-  passwordHash : string
+  passwordHash : string,
+  publicId: string
 }
 
 export interface websocketUserAuth{
   sessionToken : string
 }
+
+export interface editCamData{
+  publicId : string,
+  email : string
+  address : string
+} // data needed to edit the infos of a camera, it will change the email and address to the one provided endpoint is /editCam POST an admin level auth token is to be provided
+
+export interface WSRelay{
+  // deno-lint-ignore no-explicit-any
+  relay : any
+} // if a cam sends this it sands it to every user, and if in reverse it sends it to the cam
+
+export interface WSCamUpdate{
+  address : string,
+  email : string,
+  emailHash : string,
+  connectedUsers : number
+} // sends this if the address/email changes or if someone connects or disconnects
+
+export interface WSPasswordChange{
+  passwordHash : string
+} // a camera can sends this if it wants to change the password, it also disconnects every currently connected user

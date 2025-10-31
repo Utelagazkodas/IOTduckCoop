@@ -3,7 +3,7 @@ import {
   cameraAdminData,
   databaseType,
   statusData,
-} from "../utility/classes.ts";
+} from "../../shared/classes.ts";
 import { Authorization } from "../utility/runtimeUtil.ts";
 import { handleWebsocket } from "../ws/websocket.ts";
 
@@ -33,6 +33,7 @@ export async function get(
       );
     }
 
+    
     const { socket, response } = Deno.upgradeWebSocket(req);
 
     handleWebsocket(socket);
@@ -47,8 +48,9 @@ export async function get(
       emailHash: string;
       salt: string;
       connected: boolean;
+      publicId : string
     }[] = camDB.prepare(
-      "SELECT emailHash, salt, connected FROM cameras",
+      "SELECT emailHash, salt, publicId connected FROM cameras",
     ).all();
 
     const tempStatusData: statusData = {

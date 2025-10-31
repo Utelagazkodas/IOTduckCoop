@@ -1,12 +1,11 @@
 <script>
     import { logIn } from "$lib/api/login";
 
-
     let password = "";
     let email = "";
     let stayLoggedIn = false;
 
-    let errorMessage = ""
+    let errorMessage = "";
 
     let onClick = async () => {
         errorMessage = await logIn(password, email, !stayLoggedIn);
@@ -14,21 +13,20 @@
 </script>
 
 <div class="w-full h-full flex justify-center items-center">
-    <div class="bg-teal-400 p-3 rounded-xl border-2 border-teal-950 ">
+    <form onsubmit={onClick} class="bg-teal-400 p-3 rounded-xl border-2 border-teal-950">
         <input
             type="text"
             bind:value={email}
             class="bg-teal-900 text-teal-50 py-0.5 px-1.5 rounded mb-1"
-            placeholder="email (leave blank for admin login)"
+            placeholder="email"
         />
         <br />
         <input
-            type="text"
+            type="password"
             bind:value={password}
             class="bg-teal-900 text-teal-50 py-0.5 px-1.5 rounded"
             placeholder="password"
         />
-        
 
         <div class="w-full flex mt-1">
             <div>
@@ -44,9 +42,9 @@
             >
         </div>
         {#if errorMessage != ""}
-             <div class="text-red-500">
+            <div class="text-red-500">
                 {errorMessage}
-             </div>
+            </div>
         {/if}
-    </div>
+    </form>
 </div>

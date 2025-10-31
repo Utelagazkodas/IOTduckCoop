@@ -1,11 +1,12 @@
 import { get } from "svelte/store";
 import { getGeneralStatus } from "./network";
 import { currentSessionToken, IP, status } from "./stores";
-import type { loginData, logoutData, sessionTokenData } from "$lib/util/classes";
-import { hash } from "$lib/util/hash";
-import { addSalt, getUnixTime } from "$lib/util/util";
+import type { loginData, logoutData, sessionTokenData } from "@classes";
+import { hash } from "@hash";
+import { addSalt, getUnixTime, isValidEmail } from "$lib/util/util";
 import { removeCookie, setCookie } from "typescript-cookie";
 import { getAdminData } from "./admin";
+import { connectWebsocket } from "./user";
 
 export async function logIn(
   password: string,
@@ -39,6 +40,10 @@ export async function logIn(
     };
   } // USER LOGIN (aka an email exists)
   else {
+
+    if(!isValidEmail(email)){
+      return "A valid email is needed"
+    }
     // finds the salt to use for the current email
     let curEmailHash = hash(email, $status.settingsData.hashLength);
     let curEmailHashData: {
@@ -88,7 +93,8 @@ export async function logIn(
     switch (body) {
       case "wrong password":
         if (send.admin) {
-          return "Wrong admin password";
+          return "An email is needed"
+          //return "Wrong admin password";
         } else {
           return "Wrong password";
         }
@@ -100,6 +106,9 @@ export async function logIn(
 
   if (send.admin) {
     getAdminData();
+  }
+  else{
+    connectWebsocket();
   }
 
   setCookie("sessionToken", JSON.stringify(get(currentSessionToken)), {

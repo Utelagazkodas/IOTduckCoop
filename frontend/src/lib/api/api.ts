@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { currentSessionToken, IP, serverNotFound, status } from "./stores";
 import { getCookie, removeCookie } from "typescript-cookie";
-import type { sessionTokenData } from "$lib/util/classes";
+import type { sessionTokenData } from "@classes";
 import { getUnixTime, useIp } from "$lib/util/util";
 import { checkSessionToken } from "./login";
 

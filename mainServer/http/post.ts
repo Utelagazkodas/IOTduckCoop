@@ -4,19 +4,25 @@ import {
   cameraAdminData,
   createCamData,
   databaseType,
+  editCamData,
   loginData,
   sessionTokenData,
-} from "../utility/classes.ts";
+} from "../../shared/classes.ts";
 
 import { getUnixTime, isValidEmail } from "../utility/util.ts";
-import { hash } from "../utility/hash.ts";
+import { hash } from "../../shared/hash.ts";
 import { Authorization } from "../utility/runtimeUtil.ts";
+import { updateCamData } from "../ws/camWS.ts";
 
 const loginUrlPattern = new URLPattern({ pathname: "/login" });
 
 const createCamUrlPattern = new URLPattern({
   pathname: "/createCam",
 });
+
+const editCamUrlPattern = new URLPattern({
+  pathname: "/editCam"
+})
 
 
 
@@ -174,6 +180,66 @@ export async function post(
       "SELECT token, publicId, salt, connected, email, emailHash, address FROM cameras WHERE token=?",
     ).all(token);
     return new Response(JSON.stringify(resp[0]), { status: 200 });
+  }
+
+  // EDIT CAM
+  if (editCamUrlPattern.test(url)) {
+    let data: editCamData;
+    try {
+      data = JSON.parse(await req.text());
+    } catch (_error) {
+      return new Response("Bad json in body or no data", { status: 422 });
+    }
+
+    const auth = await Authorization.auth(req);
+
+    if (auth instanceof Response) {
+      return auth;
+    }
+
+    if (!auth.admin) {
+      return new Response("unathorized", { status: 401 });
+    }
+    if (!data.email || !isValidEmail(data.email)) {
+      return new Response("invalid email", { status: 400 });
+    }
+
+    if (!data.address) {
+      return new Response("an address is needed", { status: 400 });
+    }
+
+    if(!data.publicId || data.publicId.length != RUNTIMEDATA.settingsData.idLength){
+      return new Response("public id doesnt exist or is wrong length", {status: 400})
+    }
+
+    if (
+      camDB.prepare("SELECT * FROM cameras WHERE publicId=?").all(data.publicId)
+        .length != 1
+    ) {
+      return new Response("no camera exists with that publicid", {
+        status: 500,
+      });
+    }
+
+    // changes the data in the database
+    camDB.exec(
+      `UPDATE cameras 
+       SET address=?, email=?, emailhash=?
+       WHERE publicId=?`,
+      data.address,
+      data.email,
+      hash(data.email, RUNTIMEDATA.settingsData.hashLength),
+      data.publicId
+    );
+    console.log(`edited cam, new address is ${data.address} and email is ${data.email} `);
+
+    updateCamData(data.publicId)
+
+    const resp: cameraAdminData[] = camDB.prepare(
+      "SELECT token, publicId, salt, connected, email, emailHash, address FROM cameras WHERE publicId=?",
+    ).all(data.publicId);
+    return new Response(JSON.stringify(resp[0]), { status: 200 });
+
   }
 
 

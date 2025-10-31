@@ -3,7 +3,8 @@ import {
   deleteCamData,
   logoutData,
   sessionTokenData,
-} from "../utility/classes.ts";
+  WSRelay,
+} from "@classes";
 import { Authorization } from "../utility/runtimeUtil.ts";
 import { getUnixTime } from "../utility/util.ts";
 

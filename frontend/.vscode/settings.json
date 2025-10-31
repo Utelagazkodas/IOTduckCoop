@@ -3,9 +3,9 @@
         "**/.git": true,
         "**/.svn": true,
         "**/.hg": true,
-        "**/CVS": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
+        "**/CVS": true,
         "**/**.config.js": true,
         "**/**.json": true,
         ".npmrc": true,
@@ -16,4 +16,5 @@
         "**/.svelte-kit": true,
         "**/.vscode": true
     },
+    "explorerExclude.backup": {},
 }

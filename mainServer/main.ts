@@ -1,6 +1,6 @@
 import { Database } from "@db/sqlite";
 import { handleRequest } from "./http.ts";
-import { runtimeData } from "./utility/classes.ts";
+import { runtimeData } from "../shared/classes.ts";
 import {  requireEnv } from "./utility/util.ts";
 import "@std/dotenv/load"
 import { Authorization } from "./utility/runtimeUtil.ts";
@@ -11,6 +11,10 @@ export const PORT = Number(requireEnv("PORT"))
 
 export const sessionTokenDB = await Deno.openKv("./database/sessionTokens.kv") 
 export const camDB = new Database("./database/cam.db")
+
+// server just started, every camera is disconnected
+camDB.exec("UPDATE cameras SET connected=0, passwordHash=NULL")
+
 
 Deno.serve({port: PORT},handleRequest)
 

@@ -1,8 +1,8 @@
 import { addSalt, getInANumber, getInAPassword, getInAString, requireEnv, useIp } from "./utility/util.ts";
-import {statusData, databaseType} from "./utility/classes.ts"
+import {statusData, databaseType} from "../shared/classes.ts"
 import "@std/dotenv/load"
 import { ensureDirSync, existsSync } from "@std/fs";
-import {hash} from "./utility/hash.ts"
+import {hash} from "../shared/hash.ts"
 
 
 if (existsSync("./database")) {
@@ -60,6 +60,7 @@ try {
 }
 
 
+
 const passwordHash = hash(addSalt(getInAPassword("Password: ", 4), data.salt), status.settingsData.hashLength)
 
 // removes the database
@@ -69,10 +70,13 @@ try {
 
 ensureDirSync("./database");
 
-Deno.writeTextFile("./database/data.json", JSON.stringify(data));
+Deno.writeTextFile("./database/data.json", JSON.stringify({token: data.token, publicId : data.publicId, salt: data.salt}));
 
 const kv = await Deno.openKv("./database/runtimeData.kv");
 
-kv.set(["passwordHash"], passwordHash)
+await kv.set(["passwordHash"], passwordHash)
+await kv.set(["address"], data.address)
+await kv.set(["email"], data.email)
+await kv.set(["emailHash"], data.emailHash)
 
 kv.close();
