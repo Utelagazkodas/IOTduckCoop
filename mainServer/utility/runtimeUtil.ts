@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { sessionTokenDB } from "../main.ts";
 import { sessionTokenData, websocketCamAuth, websocketUserAuth, WSPasswordChange, WSRelay } from "../../shared/classes.ts";
 import { getUnixTime } from "./util.ts";

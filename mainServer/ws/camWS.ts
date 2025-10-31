@@ -167,9 +167,15 @@ export async function handleCameraMessage(
       userSocket.close(1001, "password changed");
     });
 
+    channels[auth.publicId].connectedUserSockets = []
+
+    updateCamData(auth.publicId)
 
   } else if (isWSRelay(data)) {
-
+    const toSend = JSON.stringify(data.relay)
+    channels[auth.publicId].connectedUserSockets.forEach((userSocket)=>{
+      userSocket.send(toSend)
+    })
 
   } else {
     socket.close(1002, "bad format of json");
