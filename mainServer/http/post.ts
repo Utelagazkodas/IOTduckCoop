@@ -66,7 +66,7 @@ export async function post(
           getUnixTime(),
         token: await generate(RUNTIMEDATA.settingsData.tokenLength),
       };
-
+      
       sessionTokenDB.set([newSessionTokenData.token], newSessionTokenData);
       return new Response(JSON.stringify(newSessionTokenData), { status: 200 });
     } else {

@@ -1,7 +1,8 @@
-import { websocketUserAuth } from "../../shared/classes.ts";
+import { websocketUserAuth, WSRelay } from "../../shared/classes.ts";
 import { Authorization } from "../utility/runtimeUtil.ts";
 import { updateCamData } from "./camWS.ts";
 import { channels } from "./websocket.ts";
+import { isWSRelay } from "../utility/runtimeUtil.ts";
 
 /* --------------------------------------------------
    USER AUTH HANDLER
@@ -52,6 +53,39 @@ export function handleUserDisconnect(socket: WebSocket, camPublicId: string) {
 /* --------------------------------------------------
    USER MESSAGE HANDLER
 -------------------------------------------------- */
-export function handleUserMessage(socket: WebSocket, ev: MessageEvent<any>, auth: websocketUserAuth) {
+export async function handleUserMessage(socket: WebSocket, ev: MessageEvent<any>, auth: websocketUserAuth) {
   // MESSAGE FROM USER
+
+  const sessionTokenData = await Authorization.authToken(auth.sessionToken);
+
+  if (typeof sessionTokenData == "string") {
+    socket.close(1011, sessionTokenData);
+    return;
+  }
+
+  if (!channels[sessionTokenData.camPublicId!]) {
+    socket.close(
+      1011,
+      "camera disconnected since last message",
+    );
+  }
+
+  let data : WSRelay
+
+  try {
+    data = JSON.parse(ev.data);
+    if (!data) {
+      throw "";
+    }
+  } catch (error) {
+    socket.close(1002, "bad json or no json");
+    return;
+  }
+
+  if(isWSRelay(data)){
+    channels[sessionTokenData.camPublicId!].cameraSocket.send(JSON.stringify(data.relay))
+  }
+  else{
+    socket.close(1001, "bad format of json")
+  }
 }
