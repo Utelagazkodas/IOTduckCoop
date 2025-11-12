@@ -32,9 +32,9 @@ ws.onopen = async (event) => {
 }
 
 ws.onmessage = async (event : MessageEvent) => {
-    const data : databaseType = JSON.parse(event.data)
+    const data = JSON.parse(event.data)
 
-    
+    console.log(data)
 }
 
 ws.onclose = async (event : CloseEvent) =>{

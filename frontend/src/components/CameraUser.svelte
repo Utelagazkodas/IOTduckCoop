@@ -1,8 +1,24 @@
 <script lang="ts">
     import { logOut } from "$lib/api/login";
+    import { connectingWS } from "$lib/api/stores";
+    import { connectWebsocket } from "$lib/api/user";
+    import Loading from "./Loading.svelte";
 
     let globalLogout = false;
 </script>
+
+
+    {#if $connectingWS}
+         <Loading/>
+    {:else}
+         <div class="h-full w-full flex justify-center items-center">
+            <button onclick={()=>{
+                connectWebsocket()
+            }} class="text-xl bg-teal-300 border rounded-xl p-2 hover:cursor-pointer">Connect To Camera</button>
+         </div>
+    {/if}
+
+
 
 <!-- logout button  -->
 <div class="absolute bottom-5 left-5">

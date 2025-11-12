@@ -5,6 +5,9 @@ import type { sessionTokenData } from "@classes";
 import { getUnixTime, useIp } from "$lib/util/util";
 import { checkSessionToken } from "./login";
 
+export const wsProtocol = "ws"
+export const httpProtocol = "http" // REWRITE TO HTTPS AND WSS WHEN IN PROD
+
 export async function initApi() {
     // sets everything to default
     serverNotFound.set(false);
@@ -13,11 +16,12 @@ export async function initApi() {
     status.set(undefined);
 
     // gets ip
-    IP.set(useIp(await (await fetch("/ip.txt", { method: "GET" })).text(), "http", "/"));
+    const ip = await (await fetch("/ip.txt", { method: "GET" })).text()
+    IP.set({httpIp: useIp(ip, httpProtocol, "/"), wsIp: useIp(ip, wsProtocol, "/")});
 
     // tries getting the status
     try {
-        let resp = await fetch(get(IP) + "status", { method: "GET" });
+        let resp = await fetch(get(IP)?.httpIp + "status", { method: "GET" });
         const parsed = JSON.parse(await resp.text());
         status.set(parsed);
     } catch {

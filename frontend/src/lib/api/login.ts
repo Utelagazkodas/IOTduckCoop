@@ -78,7 +78,7 @@ export async function logIn(
 
   let resp: Response;
   try {
-    resp = await fetch($IP + "login", {
+    resp = await fetch($IP.httpIp + "login", {
       method: "POST",
       body: JSON.stringify(send),
     });
@@ -108,7 +108,7 @@ export async function logIn(
     getAdminData();
   }
   else{
-    connectWebsocket();
+    //connectWebsocket();
   }
 
   setCookie("sessionToken", JSON.stringify(get(currentSessionToken)), {
@@ -138,7 +138,7 @@ export async function checkSessionToken(
 
   let resp: Response;
   try {
-    resp = await fetch(curIP + "sessionTokenCheck", {
+    resp = await fetch(curIP.httpIp + "sessionTokenCheck", {
       method: "GET",
       headers: { "Authorization": curSessionToken.token },
     });
@@ -182,7 +182,7 @@ export async function logOut(everywhere: boolean): Promise<void> {
     throw "an ip, a sessiontoken and a status (being connected to the server) is required to log out";
   }
 
-  fetch(curIP + "logout", {method: "DELETE", headers: { "Authorization": curSessionToken.token }, body: JSON.stringify({everywhere} as logoutData)})
+  fetch(curIP.httpIp + "logout", {method: "DELETE", headers: { "Authorization": curSessionToken.token }, body: JSON.stringify({everywhere} as logoutData)})
 
   currentSessionToken.set(undefined)
   removeCookie("sessionToken");

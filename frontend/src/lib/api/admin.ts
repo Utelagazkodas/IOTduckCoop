@@ -27,7 +27,7 @@ export async function getAdminData(): Promise<void> {
 
     let resp: Response;
     try {
-        resp = await fetch(curIP + "adminData", {
+        resp = await fetch(curIP.httpIp + "adminData", {
             method: "GET",
             headers: { "Authorization": curSessionToken.token },
         });
@@ -78,7 +78,7 @@ export async function createCam(
 
     let resp: Response;
     try {
-        resp = await fetch(curIP + "createCam", {
+        resp = await fetch(curIP.httpIp + "createCam", {
             method: "POST",
             headers: { "Authorization": curSessionToken.token },
             body: JSON.stringify(createData),
@@ -133,7 +133,7 @@ export async function editCam(
 
     let resp: Response;
     try {
-        resp = await fetch(curIP + "editCam", {
+        resp = await fetch(curIP.httpIp + "editCam", {
             method: "POST",
             headers: { "Authorization": curSessionToken.token },
             body: JSON.stringify(editData),
@@ -188,7 +188,7 @@ export async function deleteCam(
 
     let resp: Response;
     try {
-        resp = await fetch(curIP + "deleteCam", {
+        resp = await fetch(curIP.httpIp + "deleteCam", {
             method: "DELETE",
             headers: { "Authorization": curSessionToken.token },
             body: JSON.stringify(deleteData),
