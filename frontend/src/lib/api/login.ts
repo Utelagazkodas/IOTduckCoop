@@ -6,7 +6,7 @@ import { hash } from "@hash";
 import { addSalt, getUnixTime, isValidEmail } from "$lib/util/util";
 import { removeCookie, setCookie } from "typescript-cookie";
 import { getAdminData } from "./admin";
-import { connectWebsocket } from "./user";
+import { connectWebsocket, disconnectWS } from "./user";
 
 export async function logIn(
   password: string,
@@ -183,6 +183,9 @@ export async function logOut(everywhere: boolean): Promise<void> {
   }
 
   fetch(curIP.httpIp + "logout", {method: "DELETE", headers: { "Authorization": curSessionToken.token }, body: JSON.stringify({everywhere} as logoutData)})
+
+  disconnectWS()
+  
 
   currentSessionToken.set(undefined)
   removeCookie("sessionToken");

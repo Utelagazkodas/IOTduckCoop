@@ -1,22 +1,46 @@
 <script lang="ts">
     import { logOut } from "$lib/api/login";
-    import { connectingWS } from "$lib/api/stores";
+    import { WSData, WSState } from "$lib/api/stores";
     import { connectWebsocket } from "$lib/api/user";
+    import { WSStateData } from "$lib/util/frontendClasses";
     import Loading from "./Loading.svelte";
 
     let globalLogout = false;
+
+    let canvas : HTMLCanvasElement | null = null
+
+    $ : if(canvas){
+        let ctx = canvas.getContext("bitmaprenderer")
+        //ctx!.reset()
+        //ctx!.font = "48px serif"
+        //ctx!.fillText(`${$WSData}`, 10, 50)
+        //let bitmap : ImageBitmap 
+        if($WSData != null){
+
+        ctx!.transferFromImageBitmap($WSData)
+        }
+
+    }
 </script>
 
 
-    {#if $connectingWS}
-         <Loading/>
-    {:else}
-         <div class="h-full w-full flex justify-center items-center">
-            <button onclick={()=>{
-                connectWebsocket()
-            }} class="text-xl bg-teal-300 border rounded-xl p-2 hover:cursor-pointer">Connect To Camera</button>
-         </div>
-    {/if}
+{#if $WSState == WSStateData.disconnected}
+     <div class="h-full w-full flex justify-center items-center">
+        <button onclick={()=>{
+            connectWebsocket()
+        }} class="text-xl bg-teal-300 border rounded-xl p-2 hover:cursor-pointer">Connect To Camera</button>
+     </div>
+     
+{:else if $WSState == WSStateData.connected}
+     <div class="h-full w-full flex justify-center items-center">
+        <div class="bg-teal-300 border rounded-xl p-2">
+            <canvas height="600px" width="100px" bind:this={canvas}></canvas>
+        </div>
+     </div>
+
+{:else}
+    <Loading/>
+{/if}
 
 
 

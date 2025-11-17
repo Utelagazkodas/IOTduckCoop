@@ -1,3 +1,4 @@
+import { WSStateData } from "$lib/util/frontendClasses";
 import {type cameraAdminData, type sessionTokenData, type statusData } from "@classes";
 import { writable } from "svelte/store";
 
@@ -13,4 +14,6 @@ export const currentSessionToken = writable<sessionTokenData | undefined>(
 export const adminData = writable<cameraAdminData[] | undefined>(undefined)
 
 // user stores
-export const connectingWS = writable<boolean>(false)
+export const WSState = writable<WSStateData>(WSStateData.disconnected)
+
+export const WSData = writable<ImageBitmap | null>(null)
