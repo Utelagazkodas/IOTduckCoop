@@ -16,8 +16,8 @@
         //ctx!.fillText(`${$WSData}`, 10, 50)
         //let bitmap : ImageBitmap 
         if($WSData != null){
-
-        ctx!.transferFromImageBitmap($WSData)
+            
+            ctx!.transferFromImageBitmap($WSData.image)
         }
 
     }
@@ -33,10 +33,20 @@
      
 {:else if $WSState == WSStateData.connected}
      <div class="h-full w-full flex justify-center items-center">
-        <div class="bg-teal-300 border rounded-xl p-2">
-            <canvas height="600px" width="100px" bind:this={canvas}></canvas>
+        <div class="bg-teal-300 border rounded-xl p-2 ">
+            <canvas height="600px" width="800px" bind:this={canvas}></canvas>
+            <div class="flex justify-evenly items-center my-4">
+                <div class="bg-pink-600">
+                    door
+                </div>
+                <div>
+                    light
+                </div>
+            </div>
         </div>
+        
      </div>
+
 
 {:else}
     <Loading/>

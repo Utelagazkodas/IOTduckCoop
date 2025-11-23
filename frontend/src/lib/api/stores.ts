@@ -1,5 +1,5 @@
 import { WSStateData } from "$lib/util/frontendClasses";
-import {type cameraAdminData, type sessionTokenData, type statusData } from "@classes";
+import {doorState, lightState, type cameraAdminData, type sessionTokenData, type statusData } from "@classes";
 import { writable } from "svelte/store";
 
 // Svelte reactive stores
@@ -16,4 +16,4 @@ export const adminData = writable<cameraAdminData[] | undefined>(undefined)
 // user stores
 export const WSState = writable<WSStateData>(WSStateData.disconnected)
 
-export const WSData = writable<ImageBitmap | null>(null)
+export const WSData = writable<{image : ImageBitmap, doorState : doorState, lightState : lightState} | null>(null)

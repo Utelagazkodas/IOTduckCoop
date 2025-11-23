@@ -30,6 +30,7 @@ export function handleWebsocket(socket: WebSocket) {
         }
       } catch (error) {
         socket.close(1001, "bad or no json")
+        return
       }
 
       await handleInitialAuth(socket, auth!);
