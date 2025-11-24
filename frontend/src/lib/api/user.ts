@@ -2,7 +2,7 @@ import { useIp } from "$lib/util/util";
 import { get } from "svelte/store";
 import {currentSessionToken, IP, WSData, WSState } from "./stores";
 import type { Url } from "url";
-import type { websocketCamAuth, websocketUserAuth, WSRelay } from "@classes";
+import type { websocketCamAuth, websocketUserAuth, WSRelay, WSToggle } from "@classes";
 import { WSStateData } from "$lib/util/frontendClasses";
 
 export let disconnectWS : () => void = ()=>{}
@@ -63,7 +63,19 @@ export function toggleDoor(){
         throw "you need to be connected to toggle door"
     }
 
+    let toggleDoor : WSToggle = {toggleDoor: true, toggleLight: false}
+    let toSend : WSRelay = {relay: toggleDoor}
+    WSSocket.send(JSON.stringify(toSend))
+}
+
+export function toggleLight(){
+    let curWSState = get(WSState)
     
-    let toSend : WSRelay = {}
-    WSSocket.send()
+    if(!(curWSState == WSStateData.connected && WSSocket)){
+        throw "you need to be connected to toggle door"
+    }
+
+    let toggleDoor : WSToggle = {toggleDoor: false, toggleLight: true}
+    let toSend : WSRelay = {relay: toggleDoor}
+    WSSocket.send(JSON.stringify(toSend))
 }

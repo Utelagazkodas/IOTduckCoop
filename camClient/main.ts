@@ -42,6 +42,10 @@ export const RUNTIMEDATA: { token: string; publicId: string; salt: string } =
 
 export const runtimeKv = await Deno.openKv("./database/runtimeData.kv");
 
+export let emailHash : string = (await runtimeKv.get(["emailHash"])).value as string
+export let email : string = (await runtimeKv.get(["email"])).value as string
+export let address : string = (await runtimeKv.get(["address"])).value as string
+
 export const ws = new WebSocket(useIp(IP, "ws", "/connect"));
 
 let connectedUsers = 0;
@@ -63,9 +67,12 @@ ws.onmessage = async (event: MessageEvent) => {
     if (isWSCamUpdate(data)) {
       connectedUsers = data.connectedUsers;
 
-      await runtimeKv.set(["address"], data.address);
-      await runtimeKv.set(["email"], data.email);
-      await runtimeKv.set(["emailHash"], data.emailHash);
+      if(address != data.address || email != data.email || emailHash != emailHash){
+        runtimeKv.set(["address"], data.address);
+        runtimeKv.set(["email"], data.email);
+        runtimeKv.set(["emailHash"], data.emailHash);
+      }
+
       
     } else if (isWSToggle(data)) {
       if (data.toggleDoor) {
