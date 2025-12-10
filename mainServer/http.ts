@@ -1,6 +1,5 @@
 import { get } from "./http/get.ts";
 import { post } from "./http/post.ts";
-import { Authorization } from "./utility/runtimeUtil.ts";
 import {del} from "./http/delete.ts"
 
 export async function handleRequest(

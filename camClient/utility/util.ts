@@ -1,4 +1,5 @@
 import {promptSecret} from "@std/cli/prompt-secret";
+import { WSCamUpdate, WSToggle } from "@classes";
 
 
 export function getUnixTime(): number {
@@ -128,4 +129,19 @@ export function isValidEmail(email: string): boolean {
 
 export function useIp(ip : string, protocol : string, directory : string) : string {
     return `${protocol}://${ip}${directory}`
+}
+
+
+export function isWSCamUpdate(obj: any): obj is WSCamUpdate {
+  return hasKeys<WSCamUpdate>(obj, ["address", "connectedUsers", "email", "emailHash"]);
+}
+
+export function isWSToggle(obj: any): obj is WSToggle {
+  return hasKeys<WSToggle>(obj, ["toggleDoor", "toggleLight"]);
+}
+
+function hasKeys<T extends object>(obj : any, keys: (keyof T)[]): obj is T {
+  return typeof obj === "object" &&
+         obj !== null &&
+         keys.every((key) => key in obj);
 }

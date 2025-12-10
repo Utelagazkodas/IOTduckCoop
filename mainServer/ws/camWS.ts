@@ -125,11 +125,22 @@ export async function handleCameraMessage(
 ) {
   // MESSAGE FROM CAM
 
+  if(typeof ev.data != "string"){
+    channels[auth.publicId].connectedUserSockets.forEach((userSocket)=>{
+      userSocket.send(ev.data)
+      
+    })
+    return
+  }
+  
+  // if message is string
   let data: WSRelay | WSPasswordChange;
 
   try {
     data = JSON.parse(ev.data);
+    
     if (!data) {
+      
       throw "";
     }
   } catch (error) {

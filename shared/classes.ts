@@ -102,3 +102,22 @@ export interface WSCamUpdate{
 export interface WSPasswordChange{
   passwordHash : string
 } // a camera can sends this if it wants to change the password, it also disconnects every currently connected user
+
+export enum doorState{
+  closed = 1,
+  closing = 2,
+  open = 3,
+  opening = 4,
+  noDoor = 0
+}
+
+export enum lightState{
+  noLight = 0,
+  off = 1,
+  on = 2 
+}
+
+export interface WSToggle{
+  toggleLight : boolean,
+  toggleDoor : boolean
+}

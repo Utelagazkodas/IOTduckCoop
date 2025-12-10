@@ -2,7 +2,6 @@ import { ensureDirSync, existsSync } from "@std/fs";
 import {
   addSalt,
   getInAPassword,
-  getInAString,
   removeJSONcomments,
 } from "./utility/util.ts";
 import { Database } from "@db/sqlite";
